@@ -10,14 +10,12 @@ using namespace std;
 int main(int iArgCnt, char ** argv)
 {
 
-
+	// переходим в консоли на русский язык
+	system("chcp 1251 > nul");
 	ControlWMI m;
-	m.GetClassFull((_bstr_t)"SELECT * FROM Win32_Processor");
-
+	//m.ViewClassFull((_bstr_t)"SELECT * FROM Win32_Processor");
+	m.ShowProcessor();
 	
-
-
-
 
 /*
 	// For example, get the name of the operating system
@@ -99,11 +97,5 @@ int main(int iArgCnt, char ** argv)
 
 
 	*/
-
-
-	
-	//pLoc->Release();
-	//pSvc->Release();
-	//CoUninitialize();
 	return 0;
 }

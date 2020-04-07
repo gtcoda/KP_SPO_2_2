@@ -9,6 +9,12 @@ using namespace std;
 #include <Wbemidl.h>
 
 #pragma comment(lib, "wbemuuid.lib")
+struct ProcessorProp {
+	BSTR Name;
+	BSTR Value;
+};
+
+
 
 class ControlWMI // определение класса
 {
@@ -19,7 +25,11 @@ private:
 public:
 	ControlWMI();
 	~ControlWMI();
-	HRESULT GetClassFull(BSTR Query);
+	HRESULT ViewClassFull(BSTR Query);
+	HRESULT GetProp(BSTR Query, IWbemClassObject **pclsObj);
+	HRESULT GetPropName(BSTR Query, BSTR Name, VARIANT *vtProp);
+
+	HRESULT ShowProcessor();
 };
 
 
