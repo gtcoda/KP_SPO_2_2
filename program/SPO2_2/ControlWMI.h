@@ -1,5 +1,5 @@
-#ifndef DB_H
-#define DB_H
+#ifndef ControlWMI_H
+#define ControlWMI_H
 
 #define _WIN32_DCOM
 
@@ -29,7 +29,7 @@ public:
 	HRESULT GetProp(BSTR Query, IWbemClassObject **pclsObj);
 	HRESULT GetPropName(BSTR Query, BSTR Name, VARIANT *vtProp);
 
-	HRESULT ShowProcessor();
+	
 };
 
 

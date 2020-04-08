@@ -228,28 +228,6 @@ HRESULT ControlWMI::GetPropName(BSTR Query, BSTR Name, VARIANT *vtProp) {
 }
 
 
-// Отобразить информацию о процессоре
-HRESULT ControlWMI::ShowProcessor() {
-	HRESULT hr;
-	cout << "CPU Info" << endl;
-	VARIANT vtProp;
-	
-	hr = GetPropName((_bstr_t)"SELECT * FROM Win32_Processor", (_bstr_t)"AddressWidth", &vtProp);
-	if (!FAILED(hr)) {
-		cout << "Разрядность: " << vtProp.intVal << endl;
-	}
-	
-	hr = GetPropName((_bstr_t)"SELECT * FROM Win32_Processor", (_bstr_t)"AddressWidth", &vtProp);
-	if (!FAILED(hr)) {
-		cout << "Разрядность: " << vtProp.intVal << endl;
-	}
-		
-	
-	return S_OK;
-}
-
-
-
 // Деструктор.
 ControlWMI::~ControlWMI() {
 	pSvc->Release();
