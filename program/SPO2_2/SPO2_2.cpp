@@ -11,8 +11,6 @@ using namespace std;
 #include "SysInfo.h"
 
 
-#include "curl.h"
-
 
 int main(int iArgCnt, char ** argv)
 {
