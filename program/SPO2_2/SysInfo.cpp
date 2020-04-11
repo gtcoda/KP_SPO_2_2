@@ -36,5 +36,50 @@ HRESULT SysInfo::ShowProcessor() {
 	}
 
 
+
+
+	hr = objWMI.GetPropName((_bstr_t)"SELECT * FROM Win32_Processor", (_bstr_t)"MaxClockSpeed", &vtProp);
+	if (!FAILED(hr)) {
+		cout << "Максимальная частота: " << vtProp.intVal << " МГц" << endl;
+	}
+
+	hr = objWMI.GetPropName((_bstr_t)"SELECT * FROM Win32_Processor", (_bstr_t)"CurrentClockSpeed", &vtProp);
+	if (!FAILED(hr)) {
+		cout << "Текущая частота: " << vtProp.intVal << " МГц" << endl;
+	}
+
+	hr = objWMI.GetPropName((_bstr_t)"SELECT * FROM Win32_Processor", (_bstr_t)"ExtClock", &vtProp);
+	if (!FAILED(hr)) {
+		cout << "Частота шины: " << vtProp.intVal << " МГц" << endl;
+	}
+
+	hr = objWMI.GetPropName((_bstr_t)"SELECT * FROM Win32_Processor", (_bstr_t)"NumberOfCores", &vtProp);
+	if (!FAILED(hr)) {
+		cout << "Количество ядер: " << vtProp.intVal  << endl;
+	}
+
+	hr = objWMI.GetPropName((_bstr_t)"SELECT * FROM Win32_Processor", (_bstr_t)"NumberOfEnabledCore", &vtProp);
+	if (!FAILED(hr)) {
+		cout << "Количество активных ядер: " << vtProp.intVal << endl;
+	}
+
+	hr = objWMI.GetPropName((_bstr_t)"SELECT * FROM Win32_Processor", (_bstr_t)"NumberOfLogicalProcessors", &vtProp);
+	if (!FAILED(hr)) {
+		cout << "Количество логических ядер: " << vtProp.intVal << endl;
+	}
+
+	hr = objWMI.GetPropName((_bstr_t)"SELECT * FROM Win32_Processor", (_bstr_t)"L2CacheSize", &vtProp);
+	if (!FAILED(hr)) {
+		cout << "Размер L2: " << vtProp.intVal << " Кб" << endl;
+	}
+
+
+	hr = objWMI.GetPropName((_bstr_t)"SELECT * FROM Win32_Processor", (_bstr_t)"L3CacheSize", &vtProp);
+	if (!FAILED(hr)) {
+		cout << "Размер L3: " << vtProp.intVal << " Кб" << endl;
+	}
+
+
+
 	return S_OK;
 }

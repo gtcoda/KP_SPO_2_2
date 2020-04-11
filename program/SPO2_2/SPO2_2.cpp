@@ -10,8 +10,15 @@ using namespace std;
 #include "ControlWMI.h"
 #include "SysInfo.h"
 
+
+#include "curl.h"
+
+
 int main(int iArgCnt, char ** argv)
 {
+
+
+
 
 	// переходим в консоли на русский язык
 	system("chcp 1251 > nul");
