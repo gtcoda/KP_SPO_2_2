@@ -174,6 +174,27 @@ HRESULT ControlWMI::ViewClassFull(BSTR Query) {
 	return S_OK;
 }
 
+
+HRESULT ControlWMI::GetPSVC(IWbemServices ** Svc) {
+	*Svc = pSvc;
+	return S_OK;
+}
+
+HRESULT ControlWMI::Get(BSTR Query, IEnumWbemClassObject** pEnumerator) {
+	HRESULT hr;
+
+	// Îáüåêò CIM
+	hr = pSvc->ExecQuery(
+		bstr_t("WQL"),
+		bstr_t(Query),
+		WBEM_FLAG_FORWARD_ONLY | WBEM_FLAG_RETURN_IMMEDIATELY,
+		NULL,
+		pEnumerator);
+
+	return hr;
+}
+
+
 HRESULT ControlWMI::GetProp(BSTR Query, IWbemClassObject **pclsObj) {
 	HRESULT hr;
 
@@ -234,7 +255,6 @@ ControlWMI::~ControlWMI() {
 	pLoc->Release();
 	CoUninitialize();
 }
-
 
 
 

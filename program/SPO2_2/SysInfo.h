@@ -16,7 +16,8 @@ private:
 	ControlWMI objWMI;
 public:
 	HRESULT ShowProcessor();
-
+	HRESULT ShowBIOS();
+	HRESULT ShowDISK();
 };
 
 
