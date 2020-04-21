@@ -179,8 +179,6 @@ HRESULT SysInfo::ShowBIOS() {
 	return S_OK;
 }
 
-
-
 // Отобразить информацию о DISK
 HRESULT SysInfo::ShowDISK() {
 	HRESULT hr;

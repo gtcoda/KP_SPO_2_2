@@ -23,19 +23,13 @@ private:
 	IWbemServices * pSvc = NULL;
 	IWbemLocator *pLoc = NULL;
 
-
-
-	
 public:
 	ControlWMI();
 	~ControlWMI();
 
+	// Получение результирующего набора обьектов
 	HRESULT Get(BSTR Query, IEnumWbemClassObject** pEnumerator);
-	HRESULT GetPSVC(IWbemServices ** Svc);
 
-	HRESULT ViewClassFull(BSTR Query);
-	HRESULT GetProp(BSTR Query, IWbemClassObject **pclsObj);
-	HRESULT GetPropName(BSTR Query, BSTR Name, VARIANT *vtProp);
 };
 
 

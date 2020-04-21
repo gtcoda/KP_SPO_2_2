@@ -8,15 +8,11 @@ using namespace std;
 #pragma comment(lib, "wbemuuid.lib")
 
 #include "ControlWMI.h"
-#include "SysInfoProcessor.h"
 #include "SysInfo.h"
 
 
 int main(int iArgCnt, char ** argv)
 {
-
-
-
 
 	// переходим в консоли на русский язык
 	system("chcp 1251 > nul");
