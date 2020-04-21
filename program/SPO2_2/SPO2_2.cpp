@@ -32,5 +32,6 @@ int main(int iArgCnt, char ** argv)
 	
 	//std::cout.rdbuf(coutbuf); // востановить вывод
 
+	system("pause");
 	return 0;
 }
