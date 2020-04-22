@@ -4,6 +4,7 @@
 #define _WIN32_DCOM
 using namespace std;
 #include <iostream>
+#include <iomanip>
 #include <comdef.h>
 #include <Wbemidl.h>
 #include "ControlWMI.h"
@@ -18,6 +19,7 @@ public:
 	HRESULT ShowProcessor();
 	HRESULT ShowBIOS();
 	HRESULT ShowDISK();
+	HRESULT ShowPartition();
 };
 
 

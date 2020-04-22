@@ -29,7 +29,8 @@ int main(int iArgCnt, char ** argv)
 	info.ShowBIOS();
 	cout << "==================================" << endl;
 	info.ShowDISK();
-	
+	cout << "==================================" << endl;
+	info.ShowPartition();
 	//std::cout.rdbuf(coutbuf); // востановить вывод
 
 	system("pause");

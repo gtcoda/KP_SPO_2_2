@@ -237,3 +237,73 @@ HRESULT SysInfo::ShowDISK() {
 
 	return S_OK;
 }
+
+// Отобразить информацию о разделах
+HRESULT SysInfo::ShowPartition() {
+	HRESULT hr;
+	cout << "Partition Info" << endl;
+	IEnumWbemClassObject * pEnumerator = NULL;
+
+	objWMI.Get((_bstr_t)"SELECT * FROM Win32_LogicalDisk", &pEnumerator);
+
+
+	hr = WBEM_S_NO_ERROR;
+
+	while (WBEM_S_NO_ERROR == hr)
+	{
+		ULONG            uReturned;
+		IWbemClassObject*    apObj[10];
+
+		hr = pEnumerator->Next(WBEM_INFINITE, 10, apObj, &uReturned);
+
+		if (uReturned > 0)
+		{
+			std::cout << "Caption \t"
+				<< "FileSystem \t"
+				<< "Size \t"
+				<< "FreeSize \t"
+				<< std::endl;
+
+
+			for (ULONG n = 0; n < uReturned; n++)
+			{
+
+				VARIANT vtProp;
+				
+				apObj[n]->Get((_bstr_t)"Caption", 0, &vtProp, 0, 0);
+				if (!FAILED(hr)) {
+					// Преобразуем ответ в строку
+					hr = VariantChangeType(&vtProp, &vtProp, 0, VT_BSTR);
+					wcout << vtProp.bstrVal << "\t\t";
+				}
+
+
+				apObj[n]->Get((_bstr_t)"FileSystem", 0, &vtProp, 0, 0);
+				if (!FAILED(hr) & (vtProp.bstrVal != NULL)) {
+					// Преобразуем ответ в строку
+					hr = VariantChangeType(&vtProp, &vtProp, 0, VT_BSTR);
+					wcout  << vtProp.bstrVal << "\t\t";
+				}
+
+				apObj[n]->Get((_bstr_t)"Size", 0, &vtProp, 0, 0);
+				if (!FAILED(hr) & (vtProp.bstrVal != NULL)) {
+					hr = VariantChangeType(&vtProp, &vtProp, 0, VT_UI8);
+					cout << vtProp.llVal / 1000000000 << "\t";
+				}
+
+				apObj[n]->Get((_bstr_t)"FreeSpace", 0, &vtProp, 0, 0);
+				if (!FAILED(hr) & (vtProp.bstrVal != NULL)) {
+					hr = VariantChangeType(&vtProp, &vtProp, 0, VT_UI8);
+					cout << vtProp.llVal / 1000000000 << "\t";
+				}
+
+				cout << endl;
+				apObj[n]->Release();
+			}
+
+		}
+	}
+
+
+	return S_OK;
+}
