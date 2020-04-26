@@ -52,9 +52,15 @@ struct PartitionInfo {
 
 // Структура информации о дисках
 struct DiskInfo {
-
+	std::string Name;	// Название 
+	std::string Model;	// Модель
+	int64_t Size;	// Обьем
 };
 
+struct DISK_t {
+	DiskInfo DISK_I[10];
+	int count = 0;
+};
 
 // Структура информации о клавиатуре
 struct KeyboardInfo {
@@ -103,6 +109,7 @@ private:
 	// Экземляры информационной структуры
 	CPUInfo CPU;
 	BIOSInfo BIOS;
+	DISK_t DISK;
 	
 	//MySQL 
 	sql::Driver *driver;
@@ -123,6 +130,7 @@ public:
 	HRESULT PushMysqlTest();
 	HRESULT PushMysqlCPU();
 	HRESULT PushMysqlBIOS();
+	HRESULT PushMysqlDISK();
 
 	// Получение данных из WMI
 	HRESULT CPUInfo();

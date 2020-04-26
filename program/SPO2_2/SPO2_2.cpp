@@ -22,6 +22,7 @@ int main(int iArgCnt, char ** argv)
 	// Отправим в БД
 	info.PushMysqlCPU();
 	info.PushMysqlBIOS();
+	info.PushMysqlDISK();
 
 
 	// Отобразим в stdout

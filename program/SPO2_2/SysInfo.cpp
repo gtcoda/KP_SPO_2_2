@@ -38,6 +38,9 @@ SysInfo::SysInfo(){
 
 	// Получение информации о BIOS
 	BIOSInfo();
+
+	// Получение информации о Дисках
+	DiskInfo();
 }
 
 // Деструктор
@@ -97,6 +100,7 @@ HRESULT SysInfo::PushMysqlCPU() {
 
 }
 // Отправить в базу BIOS
+
 HRESULT SysInfo::PushMysqlBIOS() {
 	
 	try {
@@ -110,6 +114,37 @@ HRESULT SysInfo::PushMysqlBIOS() {
 
 		prep_stmt->execute();
 
+		delete prep_stmt;
+
+	}
+	catch (sql::SQLException &e) {
+		cout << "# ERR: SQLException in " << __FILE__;
+		cout << "(" << __FUNCTION__ << ") on line " << __LINE__ << endl;
+		cout << "# ERR: " << e.what();
+		cout << " (MySQL error code: " << e.getErrorCode();
+		cout << ", SQLState: " << e.getSQLState() << " )" << endl;
+	}
+
+	return S_OK;
+}
+
+
+// Отправить в базу DISK
+HRESULT SysInfo::PushMysqlDISK() {
+
+	try {
+		sql::PreparedStatement *prep_stmt;
+		prep_stmt = con->prepareStatement("INSERT INTO DISK(id,Name,Model,Size) VALUES (?, ?, ?, ?)");
+
+		for (int i = 0; i < DISK.count; i++) {
+			prep_stmt->setInt64(1, id);
+			prep_stmt->setString(2, sql::SQLString(DISK.DISK_I[i].Name.c_str()));
+			prep_stmt->setString(3, sql::SQLString(DISK.DISK_I[i].Model.c_str()));
+			prep_stmt->setInt64(4, DISK.DISK_I[i].Size);
+
+			prep_stmt->execute();
+		}
+		
 		delete prep_stmt;
 
 	}
@@ -275,23 +310,99 @@ HRESULT SysInfo::BIOSInfo() {
 	return S_OK;
 }
 
-HRESULT SysInfo::PartitionInfo() {}
+HRESULT SysInfo::PartitionInfo() {
 
-HRESULT SysInfo::DiskInfo() {}
+	return S_OK;
+}
 
-HRESULT SysInfo::KeyboardInfo() {}
+HRESULT SysInfo::DiskInfo() {
+	HRESULT hr;
+	IEnumWbemClassObject * pEnumerator = NULL;
 
-HRESULT SysInfo::MBInfo() {}
+	objWMI.Get((_bstr_t)"SELECT * FROM Win32_DiskDrive", &pEnumerator);
 
-HRESULT SysInfo::MouseInfo() {}
 
-HRESULT SysInfo::VAInfo() {}
+	hr = WBEM_S_NO_ERROR;
+	// Final Next will return WBEM_S_FALSE
+	while (WBEM_S_NO_ERROR == hr)
+	{
+		ULONG            uReturned;
+		IWbemClassObject*    apObj[10];
 
-HRESULT SysInfo::DisplayInfo() {}
+		hr = pEnumerator->Next(WBEM_INFINITE, 10, apObj, &uReturned);
 
-HRESULT SysInfo::IfInfo() {}
+		if (SUCCEEDED(hr))
+		{
+			for (ULONG n = 0; n < uReturned; n++)
+			{
 
-HRESULT SysInfo::AppInfo() {}
+				VARIANT vtProp;
+				
+				apObj[n]->Get((_bstr_t)"Caption", 0, &vtProp, 0, 0);
+				if (!FAILED(hr)) {
+					// Преобразуем ответ в строку
+					hr = VariantChangeType(&vtProp, &vtProp, 0, VT_BSTR);
+					DISK.DISK_I[n].Name = ConvertBSTRToMBS(vtProp.bstrVal);
+				}
+
+				apObj[n]->Get((_bstr_t)"Model", 0, &vtProp, 0, 0);
+				if (!FAILED(hr)) {
+					// Преобразуем ответ в строку
+					hr = VariantChangeType(&vtProp, &vtProp, 0, VT_BSTR);
+					DISK.DISK_I[n].Model = ConvertBSTRToMBS(vtProp.bstrVal);
+				}
+
+				apObj[n]->Get((_bstr_t)"Size", 0, &vtProp, 0, 0);
+				if (!FAILED(hr)) {
+					hr = VariantChangeType(&vtProp, &vtProp, 0, VT_BSTR);
+					std::string size = ConvertBSTRToMBS(vtProp.bstrVal);	
+					DISK.DISK_I[n].Size = stoll(size);
+				}
+				DISK.count++;
+				apObj[n]->Release();
+			}
+
+		}
+	}
+	return S_OK;
+}
+
+
+
+HRESULT SysInfo::KeyboardInfo() {
+
+	return S_OK;
+}
+
+HRESULT SysInfo::MBInfo() {
+
+	return S_OK;
+}
+
+HRESULT SysInfo::MouseInfo() {
+
+	return S_OK;
+}
+
+HRESULT SysInfo::VAInfo() {
+
+	return S_OK;
+}
+
+HRESULT SysInfo::DisplayInfo() {
+
+	return S_OK;
+}
+
+HRESULT SysInfo::IfInfo() {
+
+	return S_OK;
+}
+
+HRESULT SysInfo::AppInfo() {
+
+	return S_OK;
+}
 
 
 /*===================== Отображение информации =====================*/
