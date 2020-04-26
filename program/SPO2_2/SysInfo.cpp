@@ -10,12 +10,11 @@ SysInfo::SysInfo(){
 
 	driver = get_driver_instance();
 
+	// Устанавливаем соединение с базой
 	con = driver->connect(DB_HOST, DB_LOGIN, DB_PASSWORD);
-	/* Connect to the MySQL test database */
+	// Выбиаем рабочую БД 
 	con->setSchema(DB_BD);
-
-
-
+	// Получим id текущего сеанса   
 	prep_stmt = con->prepareStatement("INSERT INTO Manager(time) VALUES (?)");
 	prep_stmt->setInt64(1, (long)t);
 	prep_stmt->execute();
@@ -32,7 +31,7 @@ SysInfo::SysInfo(){
 	delete stmt;
 
 
-	// Получем информацию о процессоре
+	// Получение информации о процессоре
 	CPUInfo();
 
 	// Получение информации о BIOS
@@ -58,7 +57,7 @@ HRESULT SysInfo::PushMysqlTest() {
 
 	return S_OK;
 }
-
+/*===================== Отправка в БД =====================*/
 
 // Отправить в базу CPU
 HRESULT SysInfo::PushMysqlCPU() {
@@ -97,7 +96,7 @@ HRESULT SysInfo::PushMysqlCPU() {
 	return S_OK;
 
 }
-
+// Отправить в базу BIOS
 HRESULT SysInfo::PushMysqlBIOS() {
 	
 	try {
@@ -125,6 +124,7 @@ HRESULT SysInfo::PushMysqlBIOS() {
 	return S_OK;
 }
 
+/*===================== Получение информации =====================*/
 
 // Получение информации о процессоре
 HRESULT SysInfo::CPUInfo() {
@@ -222,7 +222,7 @@ HRESULT SysInfo::CPUInfo() {
 	return S_OK;
 
 }
-
+// Получение информации о BIOS
 HRESULT SysInfo::BIOSInfo() {
 	HRESULT hr;
 	IEnumWbemClassObject * pEnumerator = NULL;
@@ -274,6 +274,8 @@ HRESULT SysInfo::BIOSInfo() {
 
 	return S_OK;
 }
+
+/*===================== Отображение информации =====================*/
 
 // Отобразить информацию о процессоре
 HRESULT SysInfo::ShowProcessor() {
