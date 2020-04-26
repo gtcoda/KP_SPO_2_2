@@ -77,6 +77,7 @@ catch (sql::SQLException &e) {
 	SysInfo info;
 
 	info.PushMysqlCPU();
+	info.PushMysqlBIOS();
 //	SysInfo info;
 	/*
 	std::ofstream out("out.txt"); //откроем файл для вывод

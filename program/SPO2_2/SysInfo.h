@@ -39,15 +39,10 @@ struct CPUInfo {
 };
 
 struct BIOSInfo {
-	std::string Name;	// имя
-	std::string Arc;	// Архитектура
-	
+	std::string Version;	// Версия 
+	std::string Caption;	// Подпись
+	std::string Manufacturer;	// Производитель
 };
-
-
-
-
-
 
 
 class SysInfo 
@@ -56,6 +51,7 @@ private:
 	ControlWMI objWMI;
 
 	CPUInfo CPU;
+	BIOSInfo BIOS;
 
 
 	//MySQL 
@@ -75,8 +71,10 @@ public:
 	~SysInfo();
 	HRESULT PushMysqlTest();
 	HRESULT PushMysqlCPU();
+	HRESULT PushMysqlBIOS();
 
 	HRESULT CPUInfo();
+	HRESULT BIOSInfo();
 	   
 	HRESULT ShowProcessor();
 	HRESULT ShowBIOS();
