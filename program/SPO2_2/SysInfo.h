@@ -45,6 +45,54 @@ struct BIOSInfo {
 	std::string Manufacturer;	// Производитель
 };
 
+// Структура информации о разделах
+struct PartitionInfo {
+	
+};
+
+// Структура информации о дисках
+struct DiskInfo {
+
+};
+
+
+// Структура информации о клавиатуре
+struct KeyboardInfo {
+
+};
+
+// Структура информации о системной плате
+struct MBInfo {
+
+};
+
+
+// Структура информации о манипуляторе
+struct MouseInfo {
+
+};
+
+// Структура информации о видеокарте
+struct VAInfo {
+
+};
+
+// Структура информации о мониторе
+struct DisplayInfo {
+
+};
+
+// Структура информации о сетевых адаптерах
+struct IfInfo {
+
+};
+
+// Структура информации о запущеных приложениях
+struct APPInfo {
+
+};
+
+
 
 class SysInfo 
 {
@@ -79,7 +127,16 @@ public:
 	// Получение данных из WMI
 	HRESULT CPUInfo();
 	HRESULT BIOSInfo();
-	
+	HRESULT PartitionInfo();
+	HRESULT DiskInfo();
+	HRESULT KeyboardInfo();
+	HRESULT MBInfo(); //
+	HRESULT MouseInfo();//
+	HRESULT VAInfo();//
+	HRESULT DisplayInfo();//
+	HRESULT IfInfo();//
+	HRESULT AppInfo();
+	  
 
 	// Отображение данных в stdout
 	HRESULT ShowProcessor();

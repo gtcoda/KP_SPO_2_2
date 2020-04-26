@@ -20,7 +20,9 @@ SysInfo::SysInfo(){
 	prep_stmt->execute();
 
 	delete prep_stmt;
-	stmt = con->createStatement();	res = stmt->executeQuery("SELECT LAST_INSERT_ID ()");
+
+	stmt = con->createStatement();
+	res = stmt->executeQuery("SELECT LAST_INSERT_ID ()");
 	
 	if (res->next()) {
 		id = res->getInt(1);
@@ -45,8 +47,6 @@ SysInfo::~SysInfo() {
 
 HRESULT SysInfo::PushMysqlTest() {
 	sql::PreparedStatement *prep_stmt;
-	sql::Statement *stmt;
-	sql::ResultSet *res;
 
 	prep_stmt = con->prepareStatement("INSERT INTO test_table(test_char, time) VALUES (?, ?)");
 	prep_stmt->setString(1, "a");
@@ -274,6 +274,25 @@ HRESULT SysInfo::BIOSInfo() {
 
 	return S_OK;
 }
+
+HRESULT SysInfo::PartitionInfo() {}
+
+HRESULT SysInfo::DiskInfo() {}
+
+HRESULT SysInfo::KeyboardInfo() {}
+
+HRESULT SysInfo::MBInfo() {}
+
+HRESULT SysInfo::MouseInfo() {}
+
+HRESULT SysInfo::VAInfo() {}
+
+HRESULT SysInfo::DisplayInfo() {}
+
+HRESULT SysInfo::IfInfo() {}
+
+HRESULT SysInfo::AppInfo() {}
+
 
 /*===================== Отображение информации =====================*/
 
