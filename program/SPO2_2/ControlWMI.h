@@ -10,6 +10,7 @@ using namespace std;
 #include "comutil.h"
 
 #pragma comment(lib, "wbemuuid.lib")
+
 struct ProcessorProp {
 	BSTR Name;
 	BSTR Value;

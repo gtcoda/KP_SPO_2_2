@@ -1,11 +1,96 @@
 #include "SysInfo.h"
 
+// Конструктор
+SysInfo::SysInfo(){
+	sql::PreparedStatement *prep_stmt;
+	sql::Statement *stmt;
+	sql::ResultSet *res;
 
-// Отобразить информацию о процессоре
-HRESULT SysInfo::ShowProcessor() {
+	std::time_t t = std::time(0);
+
+	driver = get_driver_instance();
+
+	con = driver->connect(DB_HOST, DB_LOGIN, DB_PASSWORD);
+	/* Connect to the MySQL test database */
+	con->setSchema(DB_BD);
+
+
+
+	prep_stmt = con->prepareStatement("INSERT INTO Manager(time) VALUES (?)");
+	prep_stmt->setInt64(1, (long)t);
+	prep_stmt->execute();
+
+	delete prep_stmt;
+	stmt = con->createStatement();	res = stmt->executeQuery("SELECT LAST_INSERT_ID ()");
 	
+	if (res->next()) {
+		id = res->getInt(1);
+	}
+	else {
+		cout << "Не получен ID!";
+	}
+	delete stmt;
+
+
+	// Получем информацию о процессоре
+	CPUInfo();
+}
+
+// Деструктор
+SysInfo::~SysInfo() {
+	delete con;
+}
+
+HRESULT SysInfo::PushMysqlTest() {
+	sql::PreparedStatement *prep_stmt;
+	sql::Statement *stmt;
+	sql::ResultSet *res;
+
+	prep_stmt = con->prepareStatement("INSERT INTO test_table(test_char, time) VALUES (?, ?)");
+	prep_stmt->setString(1, "a");
+	prep_stmt->setInt64(2, 132132141);
+	prep_stmt->execute();
+
+	delete prep_stmt;
+
+	return S_OK;
+}
+
+
+// Отправить в базу CPU
+HRESULT SysInfo::PushMysqlCPU() {
+	
+	sql::PreparedStatement *prep_stmt;
+
+	prep_stmt = con->prepareStatement("INSERT INTO CPU(id,Name,Arc,AddressWidth,MaxCS,CurCS,BusS,NCore,EnCore,LogicCore,L2,L3) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)");
+	prep_stmt->setInt64(1, id);
+	prep_stmt->setString(2, sql::SQLString(CPU.Name.c_str()));
+	prep_stmt->setString(3, sql::SQLString(CPU.Arc.c_str()));
+	prep_stmt->setInt64(4, CPU.AddressWidth);
+	prep_stmt->setInt64(5, CPU.MaxCS);
+	prep_stmt->setInt64(6, CPU.CurCS);
+	prep_stmt->setInt64(7, CPU.BusS);
+	prep_stmt->setInt64(8, CPU.NCore);
+	prep_stmt->setInt64(9, CPU.EnCore);
+	prep_stmt->setInt64(10, CPU.LogicCore);
+	prep_stmt->setInt64(11, CPU.L2);
+	prep_stmt->setInt64(12, CPU.L3);
+
+
+	prep_stmt->execute();
+
+	delete prep_stmt;
+
+	return S_OK;
+
+}
+
+
+
+
+// Получение информации о процессоре
+HRESULT SysInfo::CPUInfo() {
 	HRESULT hr;
-	cout << "CPU Info" << endl;
 	IEnumWbemClassObject * pEnumerator = NULL;
 
 	objWMI.Get((_bstr_t)"SELECT * FROM Win32_Processor", &pEnumerator);
@@ -25,76 +110,71 @@ HRESULT SysInfo::ShowProcessor() {
 			for (ULONG n = 0; n < uReturned; n++)
 			{
 				VARIANT vtProp;
-				
+
 				hr = apObj[n]->Get((_bstr_t)"AddressWidth", 0, &vtProp, 0, 0);
 				if (!FAILED(hr)) {
-					cout << "Разрядность: " << vtProp.intVal << endl;
+					CPU.AddressWidth = vtProp.intVal;
 				}
 
 				hr = apObj[n]->Get((_bstr_t)"Architecture", 0, &vtProp, 0, 0);
 				if (!FAILED(hr)) {
-					cout << "Архитектура: ";
-
 					switch (vtProp.intVal) {
-					case 0: cout << "x86"; break;
-					case 1: cout << "MIPS"; break;
-					case 2: cout << "Alpha"; break;
-					case 3: cout << "PowerPC"; break;
-					case 5: cout << "ARM"; break;
-					case 6: cout << "ia64"; break;
-					case 9: cout << "x64"; break;
+					case 0: CPU.Arc = (std::string)"x86"; break;
+					case 1: CPU.Arc = (std::string)"MIPS"; break;
+					case 2: CPU.Arc = (std::string)"Alpha"; break;
+					case 3: CPU.Arc = (std::string)"PowerPC"; break;
+					case 5: CPU.Arc = (std::string)"ARM"; break;
+					case 6: CPU.Arc = (std::string)"ia64"; break;
+					case 9: CPU.Arc = (std::string)"x64"; break;
 					}
-					cout << endl;
 				}
 
 				hr = apObj[n]->Get((_bstr_t)"Name", 0, &vtProp, 0, 0);
 				if (!FAILED(hr)) {
 					// Преобразуем ответ в строку
 					hr = VariantChangeType(&vtProp, &vtProp, 0, VT_BSTR);
-					wcout << "Имя: " << vtProp.bstrVal << endl;
+					CPU.Name = ConvertBSTRToMBS(vtProp.bstrVal);
 				}
 
 				hr = apObj[n]->Get((_bstr_t)"MaxClockSpeed", 0, &vtProp, 0, 0);
 				if (!FAILED(hr)) {
-					cout << "Максимальная частота: " << vtProp.intVal << " МГц" << endl;
+					CPU.MaxCS = vtProp.intVal;
 				}
 
 				hr = apObj[n]->Get((_bstr_t)"CurrentClockSpeed", 0, &vtProp, 0, 0);
 				if (!FAILED(hr)) {
-					cout << "Текущая частота: " << vtProp.intVal << " МГц" << endl;
+					CPU.CurCS = vtProp.intVal;
 				}
 
 				hr = apObj[n]->Get((_bstr_t)"ExtClock", 0, &vtProp, 0, 0);
 				if (!FAILED(hr)) {
-					cout << "Частота шины: " << vtProp.intVal << " МГц" << endl;
+					CPU.BusS = vtProp.intVal;
 				}
 
 				hr = apObj[n]->Get((_bstr_t)"NumberOfCores", 0, &vtProp, 0, 0);
 				if (!FAILED(hr)) {
-					cout << "Количество ядер: " << vtProp.intVal << endl;
+					CPU.NCore = vtProp.intVal;
 				}
 
 				hr = apObj[n]->Get((_bstr_t)"NumberOfEnabledCore", 0, &vtProp, 0, 0);
 				if (!FAILED(hr)) {
-					cout << "Количество активных ядер: " << vtProp.intVal << endl;
+					CPU.EnCore = vtProp.intVal;
 				}
 
 				hr = apObj[n]->Get((_bstr_t)"NumberOfLogicalProcessors", 0, &vtProp, 0, 0);
 				if (!FAILED(hr)) {
-					cout << "Количество логических ядер: " << vtProp.intVal << endl;
+					CPU.LogicCore = vtProp.intVal;
 				}
 
 				hr = apObj[n]->Get((_bstr_t)"L2CacheSize", 0, &vtProp, 0, 0);
 				if (!FAILED(hr)) {
-					cout << "Размер L2: " << vtProp.intVal << " Кб" << endl;
+					CPU.L2 = vtProp.intVal;
 				}
 
 				hr = apObj[n]->Get((_bstr_t)"L3CacheSize", 0, &vtProp, 0, 0);
 				if (!FAILED(hr)) {
-					cout << "Размер L3: " << vtProp.intVal << " Кб" << endl;
+					CPU.L3 = vtProp.intVal;
 				}
-				
-
 
 				apObj[n]->Release();
 			}
@@ -102,6 +182,26 @@ HRESULT SysInfo::ShowProcessor() {
 		}
 	}
 
+	return S_OK;
+
+}
+
+
+// Отобразить информацию о процессоре
+HRESULT SysInfo::ShowProcessor() {
+	
+	cout << "CPU Info" << endl;
+	cout << "Разрядность: " << CPU.AddressWidth << endl;
+	cout << "Архитектура: " << CPU.Arc << endl;
+	cout << "Имя: " << CPU.Name << endl;
+	cout << "Максимальная частота: " << CPU.MaxCS << " МГц" << endl;
+	cout << "Текущая частота: " << CPU.CurCS << " МГц" << endl;
+	cout << "Частота шины: " << CPU.BusS << " МГц" << endl;
+	cout << "Количество ядер: " << CPU.NCore << endl;
+	cout << "Количество активных ядер: " << CPU.EnCore << endl;
+	cout << "Количество логических ядер: " << CPU.LogicCore << endl;
+	cout << "Размер L2: " << CPU.L2 << " Кб" << endl;
+	cout << "Размер L3: " << CPU.L3 << " Кб" << endl;
 	return S_OK;
 }
 

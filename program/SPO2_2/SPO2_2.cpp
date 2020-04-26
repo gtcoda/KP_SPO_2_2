@@ -6,6 +6,7 @@ using namespace std;
 #include <fstream>
 #include <string>
 #pragma comment(lib, "wbemuuid.lib")
+/*
 #pragma comment(lib,"mysqlcppconn-static.lib")
 #pragma comment(lib,"mysqlcppconn.lib")
 
@@ -18,7 +19,7 @@ using namespace std;
 #include <cppconn/prepared_statement.h>
 
 #include <ctime>
-
+*/
 
 #include "ControlWMI.h"
 #include "SysInfo.h"
@@ -28,7 +29,7 @@ int main(int iArgCnt, char ** argv)
 {
 	// переходим в консоли на русский язык
 	system("chcp 1251 > nul");
-
+/*
 	std::time_t t = std::time(0);  // t is an integer type
 
 try {
@@ -39,7 +40,7 @@ try {
 
 	driver = get_driver_instance();
 	con = driver->connect("tcp://gtcoda.ru:3306", "oop", "3o4GAIQCHvPDPM6E");
-	/* Connect to the MySQL test database */
+	// Connect to the MySQL test database 
 	con->setSchema("test");
 	
 	sql::PreparedStatement *prep_stmt;
@@ -69,12 +70,13 @@ catch (sql::SQLException &e) {
 	cout << " (MySQL error code: " << e.getErrorCode();
 	cout << ", SQLState: " << e.getSQLState() << " )" << endl;
 }
-
+*/
 
 	// переходим в консоли на русский язык
 	system("chcp 1251 > nul");
 	SysInfo info;
 
+	info.PushMysqlCPU();
 //	SysInfo info;
 	/*
 	std::ofstream out("out.txt"); //откроем файл для вывод
