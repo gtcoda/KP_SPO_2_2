@@ -315,6 +315,8 @@ HRESULT SysInfo::PartitionInfo() {
 	return S_OK;
 }
 
+
+//Получение информации о DISK
 HRESULT SysInfo::DiskInfo() {
 	HRESULT hr;
 	IEnumWbemClassObject * pEnumerator = NULL;
