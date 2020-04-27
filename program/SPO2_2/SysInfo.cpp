@@ -355,8 +355,11 @@ HRESULT SysInfo::DiskInfo() {
 				apObj[n]->Get((_bstr_t)"Size", 0, &vtProp, 0, 0);
 				if (!FAILED(hr)) {
 					hr = VariantChangeType(&vtProp, &vtProp, 0, VT_BSTR);
-					std::string size = ConvertBSTRToMBS(vtProp.bstrVal);	
-					DISK.DISK_I[n].Size = stoll(size);
+					std::string size = ConvertBSTRToMBS(vtProp.bstrVal);
+					if (size != "") {
+						DISK.DISK_I[n].Size = stoll(size);
+					}
+					
 				}
 				DISK.count++;
 				apObj[n]->Release();
