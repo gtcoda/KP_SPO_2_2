@@ -24,7 +24,6 @@ int main(int iArgCnt, char ** argv)
 	info.PushMysqlBIOS();
 	info.PushMysqlDISK();
 
-
 	// Отобразим в stdout
 	info.ShowProcessor();
 	cout << "==================================" << endl;
@@ -33,7 +32,8 @@ int main(int iArgCnt, char ** argv)
 	info.ShowDISK();
 	cout << "==================================" << endl;
 	info.ShowPartition();
-
+	cout << "==================================" << endl;
+	info.ShowKeyboard();
 	system("pause");
 	return 0;
 }

@@ -64,7 +64,10 @@ struct DISK_t {
 
 // Структура информации о клавиатуре
 struct KeyboardInfo {
-
+	std::string Description;
+	std::string Caption;
+	std::string DeviceID;
+	std::string SystemName;
 };
 
 // Структура информации о системной плате
@@ -110,6 +113,7 @@ private:
 	CPUInfo CPU;
 	BIOSInfo BIOS;
 	DISK_t DISK;
+	KeyboardInfo Keyboard;
 	
 	//MySQL 
 	sql::Driver *driver;
@@ -151,6 +155,7 @@ public:
 	HRESULT ShowBIOS();
 	HRESULT ShowDISK();
 	HRESULT ShowPartition();
+	HRESULT ShowKeyboard();
 
 };
 
