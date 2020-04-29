@@ -41,6 +41,9 @@ SysInfo::SysInfo(){
 
 	// Получение информации о Дисках
 	DiskInfo();
+
+	// Получение информации о Клавиатуре
+	KeyboardInfo();
 }
 
 // Деструктор
@@ -255,7 +258,7 @@ HRESULT SysInfo::CPUInfo() {
 	}
 
 	return S_OK;
-
+	
 }
 // Получение информации о BIOS
 HRESULT SysInfo::BIOSInfo() {
@@ -374,10 +377,66 @@ HRESULT SysInfo::DiskInfo() {
 
 
 
+//Получение информации о Keyboard
 HRESULT SysInfo::KeyboardInfo() {
+	HRESULT hr;
+	IEnumWbemClassObject* pEnumerator = NULL;
+
+	objWMI.Get((_bstr_t)"SELECT * FROM Win32_Keyboard", &pEnumerator);
+
+
+	hr = WBEM_S_NO_ERROR;
+	// Final Next will return WBEM_S_FALSE
+	while (WBEM_S_NO_ERROR == hr)
+	{
+		ULONG            uReturned;
+		IWbemClassObject* apObj[10];
+
+		hr = pEnumerator->Next(WBEM_INFINITE, 10, apObj, &uReturned);
+
+		if (SUCCEEDED(hr))
+		{
+			for (ULONG n = 0; n < uReturned; n++)
+			{
+
+				VARIANT vtProp;
+
+				apObj[n]->Get((_bstr_t)"Description", 0, &vtProp, 0, 0);
+				if (!FAILED(hr)) {
+					// Преобразуем ответ в строку
+					hr = VariantChangeType(&vtProp, &vtProp, 0, VT_BSTR);
+					Keyboard.Description = ConvertBSTRToMBS(vtProp.bstrVal);
+				}
+				
+				apObj[n]->Get((_bstr_t)"Caption", 0, &vtProp, 0, 0);
+				if (!FAILED(hr)) {
+					// Преобразуем ответ в строку
+					hr = VariantChangeType(&vtProp, &vtProp, 0, VT_BSTR);
+					Keyboard.Caption = ConvertBSTRToMBS(vtProp.bstrVal);
+				}
+
+				apObj[n]->Get((_bstr_t)"DeviceID", 0, &vtProp, 0, 0);
+				if (!FAILED(hr)) {
+					// Преобразуем ответ в строку
+					hr = VariantChangeType(&vtProp, &vtProp, 0, VT_BSTR);
+					Keyboard.DeviceID = ConvertBSTRToMBS(vtProp.bstrVal);
+				}
+
+				apObj[n]->Get((_bstr_t)"SystemName", 0, &vtProp, 0, 0);
+				if (!FAILED(hr)) {
+					// Преобразуем ответ в строку
+					hr = VariantChangeType(&vtProp, &vtProp, 0, VT_BSTR);
+					Keyboard.SystemName = ConvertBSTRToMBS(vtProp.bstrVal);
+				}
+				apObj[n]->Release();
+			}
+
+		}
+	}
 
 	return S_OK;
 }
+
 
 HRESULT SysInfo::MBInfo() {
 
@@ -432,7 +491,7 @@ HRESULT SysInfo::ShowProcessor() {
 
 // Отобразить информацию о BIOS
 HRESULT SysInfo::ShowBIOS() {
-
+	cout << "BIOS Info" << endl;
 	cout << "Caption: " <<  BIOS.Caption << endl;
 	cout << "Произведено: " << BIOS.Manufacturer << endl;			
 	cout << "Версия: " << BIOS.Version << endl;
@@ -566,4 +625,16 @@ HRESULT SysInfo::ShowPartition() {
 
 
 	return S_OK;
+}
+
+// Отобразить информацию о Keyboard
+HRESULT SysInfo::ShowKeyboard() {
+	cout << "Keyboard Info" << endl;
+
+	cout << "Description: " << Keyboard.Description << endl;
+	cout << "Caption: " << Keyboard.Caption << endl;
+	cout << "DeviceID: " << Keyboard.DeviceID << endl;
+	cout << "SystemName: " << Keyboard.SystemName << endl;
+
+	return S_OK; 
 }
