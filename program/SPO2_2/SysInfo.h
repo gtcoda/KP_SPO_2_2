@@ -7,6 +7,8 @@ using namespace std;
 #include <iomanip>
 #include <comdef.h>
 #include <Wbemidl.h>
+#include <algorithm>
+
 #include "ControlWMI.h"
 #include "ConvertStr.h"
 
@@ -22,6 +24,38 @@ using namespace std;
 #include <cppconn/prepared_statement.h>
 
 #include <ctime>
+
+// Максимальное количество свойств
+//#define MAX_PROPERTY 15
+const int MAX_PROPERTY = 15;
+// Максимальное количество экземпляров
+//#define MAX_INSTANCE 10
+const int MAX_INSTANCE = 10;
+
+// Структура свойства
+struct info {
+	std::string Property;	// Название свойства
+	std::string Name;		// Название свойства по русски
+	std::string Value;		// Значение свойства
+};
+
+// Структура набора свойств класса отдающего один экземпляр
+struct WMIInfo {
+	std::string WMIClass;		// Название класса WMI
+	std::string Description;	// Описание
+	std::string Table;			// Имя таблицы
+	info ATTR[MAX_PROPERTY];
+};
+
+// Структура набора свойств класса отдающего несколько экземпляров
+struct WMIInfoMany {
+	std::string DescriptionIterator; // Описание итерации
+	std::string WMIClass;
+	std::string Description;
+	std::string Table;			
+	info ATTR[MAX_INSTANCE][MAX_PROPERTY];
+};
+
 
 // Структура информаци о CPU
 struct CPUInfo {
@@ -45,10 +79,6 @@ struct BIOSInfo {
 	std::string Manufacturer;	// Производитель
 };
 
-// Структура информации о разделах
-struct PartitionInfo {
-	
-};
 
 // Структура информации о дисках
 struct DiskInfo {
@@ -62,42 +92,6 @@ struct DISK_t {
 	int count = 0;
 };
 
-// Структура информации о клавиатуре
-struct KeyboardInfo {
-
-};
-
-// Структура информации о системной плате
-struct MBInfo {
-
-};
-
-
-// Структура информации о манипуляторе
-struct MouseInfo {
-
-};
-
-// Структура информации о видеокарте
-struct VAInfo {
-
-};
-
-// Структура информации о мониторе
-struct DisplayInfo {
-
-};
-
-// Структура информации о сетевых адаптерах
-struct IfInfo {
-
-};
-
-// Структура информации о запущеных приложениях
-struct APPInfo {
-
-};
-
 
 
 class SysInfo 
@@ -107,9 +101,61 @@ private:
 	ControlWMI objWMI;
 
 	// Экземляры информационной структуры
-	CPUInfo CPU;
-	BIOSInfo BIOS;
-	DISK_t DISK;
+
+// Информация о BIOS	
+	WMIInfo BIOS = {
+	//WMI CLASS
+		"Win32_BIOS",
+		"BIOS_INFO",
+		"BIOS",
+		{
+	// Начало инициализации внутренней структуры info	
+		{"Manufacturer", "Произведено", ""},
+		{"Version", "Версия", ""},
+		{"Caption", "Название", ""}
+	// Конец инициализации внутренней структyры info	
+	}};
+
+// Информация о дисках
+	WMIInfo DISK_I = {
+		//WMI CLASS
+			"Win32_DiskDrive",
+			"DISK_INFO",
+			"DISK",
+			{
+		// Начало инициализации внутренней структуры info
+			{"Size", "Размер", ""},
+			{"Model", "Модель", ""},
+			{"Caption", "Название", ""}
+		// Конец инициализации внутренней структyры info	
+			} };
+
+	WMIInfoMany DISK = {"Диск №"};
+
+//Информация о CPU
+	WMIInfo CPU = {
+		//WMI CLASS
+			"Win32_Processor",
+			"CPU_INFO",
+			"CPU",
+			{
+		// Начало инициализации внутренней структуры info	
+			{"AddressWidth", "Разрядность", ""},
+			{"Architecture", "Архитектура", ""},
+			{"Name", "Имя", ""},
+			{"MaxClockSpeed", "Максимальная частота", ""},
+			{"CurrentClockSpeed", "Текущая частота", ""},
+			{"ExtClock", "Частота шины", ""},
+			{"NumberOfCores", "Количество ядер", ""},
+			{"NumberOfEnabledCore", "Количество активных ядер", ""},
+			{"NumberOfLogicalProcessors", "Количество логических ядер", ""},
+			{"L2CacheSize", "Размер L2", ""},
+			{"L3CacheSize", "Размер L3", ""}
+			// Конец инициализации внутренней структyры info	
+			} };
+
+
+
 	
 	//MySQL 
 	sql::Driver *driver;
@@ -123,34 +169,25 @@ private:
 
 
 
+	HRESULT ManyWMIInfo(WMIInfoMany *many, WMIInfo *one);
+
+
 public:
 	SysInfo();
 	~SysInfo();
 	// Отправка данных в БД MySQL
 	HRESULT PushMysqlTest();
-	HRESULT PushMysqlCPU();
-	HRESULT PushMysqlBIOS();
-	HRESULT PushMysqlDISK();
+
 
 	// Получение данных из WMI
-	HRESULT CPUInfo();
-	HRESULT BIOSInfo();
-	HRESULT PartitionInfo();
-	HRESULT DiskInfo();
-	HRESULT KeyboardInfo();
-	HRESULT MBInfo(); //
-	HRESULT MouseInfo();//
-	HRESULT VAInfo();//
-	HRESULT DisplayInfo();//
-	HRESULT IfInfo();//
-	HRESULT AppInfo();
-	  
-
-	// Отображение данных в stdout
-	HRESULT ShowProcessor();
-	HRESULT ShowBIOS();
-	HRESULT ShowDISK();
-	HRESULT ShowPartition();
+	HRESULT WMIData(WMIInfo *data);
+	HRESULT WMIData(WMIInfoMany *data);
+	// Отобразить данные в stdout
+	HRESULT ShowWMIdata(WMIInfo *data);
+	HRESULT ShowWMIdata(WMIInfoMany *data);
+	// Отправить данные в MySQL
+	HRESULT PushMysql(WMIInfo *data);
+	HRESULT PushMysql(WMIInfoMany *data);
 
 };
 
