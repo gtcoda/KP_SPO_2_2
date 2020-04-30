@@ -7,6 +7,9 @@ using namespace std;
 #include <iomanip>
 #include <comdef.h>
 #include <Wbemidl.h>
+#include <algorithm>
+#include <vector>
+
 #include "ControlWMI.h"
 #include "ConvertStr.h"
 
@@ -23,83 +26,46 @@ using namespace std;
 
 #include <ctime>
 
-// Структура информаци о CPU
-struct CPUInfo {
-	std::string Name;	// имя
-	std::string Arc;	// Архитектура
-	int64_t AddressWidth;	// Разрядность
-	int64_t MaxCS;			// Максимальная частота ядра
-	int64_t CurCS;			// Текущая частота ядра
-	int64_t BusS;			// Частота шины
-	int64_t NCore;			// Количество ядер
-	int64_t EnCore;			// Количество активных ядер
-	int64_t LogicCore;		// Количество логических ядер
-	int64_t L2;				// Размер L2
-	int64_t L3;				// Размер L3
+// Максимальное количество свойств
+const int MAX_PROPERTY = 15;
+// Максимальное количество экземпляров
+const int MAX_INSTANCE = 10;
+// Максимальное количество классов в структуре
+const int MAX_CLASS = 8;
+
+// Структура свойства
+struct info {
+	std::string Property;	// Название свойства
+	std::string Name;		// Название свойства по русски
+	std::string Value;		// Значение свойства
 };
 
-// Структура информации о BIOS
-struct BIOSInfo {
-	std::string Version;	// Версия 
-	std::string Caption;	// Подпись
-	std::string Manufacturer;	// Производитель
+// Структура набора свойств класса отдающего один экземпляр
+struct WMIInfo {
+	std::string WMIClass;		// Название класса WMI
+	std::string Description;	// Описание
+	std::string Table;			// Имя таблицы
+	info ATTR[MAX_PROPERTY];
 };
 
-// Структура информации о разделах
-struct PartitionInfo {
-	
-};
-
-// Структура информации о дисках
-struct DiskInfo {
-	std::string Name;	// Название 
-	std::string Model;	// Модель
-	int64_t Size;	// Обьем
-};
-
-struct DISK_t {
-	DiskInfo DISK_I[10];
-	int count = 0;
-};
-
-// Структура информации о клавиатуре
-struct KeyboardInfo {
+// Структура набора свойств класса отдающего несколько экземпляров
+struct WMIInfoMany {
+	std::string DescriptionIterator; // Описание итерации
+	std::string WMIClass;
 	std::string Description;
-	std::string Caption;
-	std::string DeviceID;
-	std::string SystemName;
+	std::string Table;		
+	int Count;						// Количество заполненых элементов
+	info ATTR[MAX_INSTANCE][MAX_PROPERTY];
 };
 
-// Структура информации о системной плате
-struct MBInfo {
+// Структура набора свойств нескольких классов отдающего один экземпляр
 
+struct WMIInfoManyClass {
+	WMIInfo Info[MAX_CLASS]; //Структуры для каждого класса
 };
 
 
-// Структура информации о манипуляторе
-struct MouseInfo {
 
-};
-
-// Структура информации о видеокарте
-struct VAInfo {
-
-};
-
-// Структура информации о мониторе
-struct DisplayInfo {
-
-};
-
-// Структура информации о сетевых адаптерах
-struct IfInfo {
-
-};
-
-// Структура информации о запущеных приложениях
-struct APPInfo {
-
-};
 
 
 
@@ -110,11 +76,184 @@ private:
 	ControlWMI objWMI;
 
 	// Экземляры информационной структуры
-	CPUInfo CPU;
-	BIOSInfo BIOS;
-	DISK_t DISK;
-	KeyboardInfo Keyboard;
+
+// Информация о BIOS	
+	WMIInfo BIOS = {
+	//WMI CLASS
+		"Win32_BIOS",
+		"BIOS_INFO",
+		"BIOS",
+		{
+	// Начало инициализации внутренней структуры info	
+		{"Manufacturer", "Произведено", ""},
+		{"Version", "Версия", ""},
+		{"Caption", "Название", ""}
+	// Конец инициализации внутренней структyры info	
+	}};
+
+// Информация о дисках
+	WMIInfo DISK_I = {
+		//WMI CLASS
+			"Win32_DiskDrive",
+			"DISK_INFO",
+			"DISK",
+			{
+		// Начало инициализации внутренней структуры info
+			{"Size", "Размер [б]", ""},
+			{"Model", "Модель", ""},
+			{"Caption", "Название", ""}
+		// Конец инициализации внутренней структyры info	
+			} };
+
+	WMIInfoMany DISK = {"Диск №"};
+
+// Информация о partition
+
+	WMIInfo PARTITION_I = {
+		//WMI CLASS
+			"Win32_LogicalDisk",
+			"PARTITION_INFO",
+			"PART",
+			{
+		// Начало инициализации внутренней структуры info
+			{"Size", "Размер [б]", ""},
+			{"FileSystem", "Файловая система", ""},
+			{"FreeSpace", "Свободный обьем [б]", ""},
+			{"Caption", "Название", ""}
+			// Конец инициализации внутренней структyры info	
+				} };
+
+	WMIInfoMany PARTITION = { "Раздел №" };
+
+
+// Информация о клавиатуре
+
+WMIInfo KEYBOARD_I = {
+	//WMI CLASS
+		"Win32_Keyboard",
+		"KEYBOARD_INFO",
+		"KEYBOARD",
+		{
+	// Начало инициализации внутренней структуры info
+		{"Description", "Описание", ""},
+		{"DeviceID", "Идентификатор устройства", ""},
+		{"Caption", "Название", ""},
+		{"NumberOfFunctionKeys", "Кол-во ФК", ""}
+		// Конец инициализации внутренней структyры info	
+			} };
+
+WMIInfoMany KEYBOARD = { "Клавиатура №" };
+
+//Информация о CPU
+	WMIInfo CPU = {
+		//WMI CLASS
+			"Win32_Processor",
+			"CPU_INFO",
+			"CPU",
+			{
+		// Начало инициализации внутренней структуры info	
+			{"AddressWidth", "Разрядность", ""},
+			{"Architecture", "Архитектура", ""},
+			{"Name", "Имя", ""},
+			{"MaxClockSpeed", "Максимальная частота", ""},
+			{"CurrentClockSpeed", "Текущая частота", ""},
+			{"ExtClock", "Частота шины", ""},
+			{"NumberOfCores", "Количество ядер", ""},
+			{"NumberOfEnabledCore", "Количество активных ядер", ""},
+			{"NumberOfLogicalProcessors", "Количество логических ядер", ""},
+			{"L2CacheSize", "Размер L2", ""},
+			{"L3CacheSize", "Размер L3", ""}
+			// Конец инициализации внутренней структyры info	
+			} };
+
 	
+	//Информация о Материнской Плате
+	WMIInfoManyClass BB = { {
+			{// Первый класс на разбор
+				"Win32_BaseBoard",
+				"BaseBoard_INFO",
+				"BaseBoard",
+				{// Начало инициализации внутренней структуры info	
+					{"Caption", "Наименование Устройства", ""},
+					{"Description", "Описание", ""},
+					{"Manufacturer", "Производитель", ""},
+					{"Product", "Тип", ""},
+					{"SerialNumber", "Серийный номер", ""},
+					{"Tag", "Идентификатор", ""},
+					{"Version", "Версия", ""}
+				}// Конец инициализации внутренней структyры info	
+			},
+			{// Второй класс на разбор
+				"Win32_MotherboardDevice",
+				"BaseBoard_INFO",
+				"BaseBoard",
+				{// Начало инициализации внутренней структуры info	
+					{"Caption", "Наименование Устройства", ""},
+					{"Description", "Описание", ""},
+					{"SystemName ", "Имя компьютера", ""},
+					{"DeviceID ", "Идентификатор", ""},
+					{"PrimaryBusType ", "Тип первичной шины", ""},
+					{"SecondaryBusType ", "Тип вторичной шины", ""},
+				}// Конец инициализации внутренней структyры info	
+			},
+		{}
+
+	} };
+
+
+
+	WMIInfo BaseBoard = {
+		//WMI CLASS
+			"Win32_BaseBoard",
+			"BaseBoard_INFO",
+			"BaseBoard",
+			{
+		// Начало инициализации внутренней структуры info	
+			{"Caption", "Наименование Устройства", ""},
+			{"Description", "Описание", ""},
+			{"Manufacturer", "Производитель", ""},
+			{"Product", "Тип", ""},
+			{"SerialNumber", "Серийный номер", ""},
+			{"Tag", "Идентификатор", ""},
+			{"Version", "Версия", ""}
+			// Конец инициализации внутренней структyры info	
+			} };
+
+
+	// Информация о мыши
+	WMIInfo Pointer = {
+		//WMI CLASS
+			"Win32_PointingDevice",
+			"Pointer_INFO",
+			"Pointer",
+			{
+		// Начало инициализации внутренней структуры info	
+			{"Caption", "Наименование Устройства", ""},
+			{"Description", "Описание", ""},
+			{"Manufacturer", "Производитель", ""},
+			{"HardwareType", "Тип", ""},
+			{"DeviceID", "Идентификатор", ""},
+			{"DeviceInterface ", "Тип интерфейса", ""},
+			{"NumberOfButtons ", "Количество кнопок", ""}
+			// Конец инициализации внутренней структyры info	
+			} };
+
+
+	// Работа с процессами
+	std::vector <WMIInfo> Process;
+	// Описание получаемых параметров
+	WMIInfo Process_info = {
+		//WMI CLASS
+			"Win32_Process",
+			"Process_INFO",
+			"Process",
+			{
+		// Начало инициализации внутренней структуры info	
+			{"Name", "Имя", ""},
+			{"Handle", "Id", ""}
+			// Конец инициализации внутренней структyры info	
+			} };
+
 	//MySQL 
 	sql::Driver *driver;
 	sql::Connection *con;
@@ -127,37 +266,37 @@ private:
 
 
 
+	HRESULT ManyWMIInfo(WMIInfoMany *many, WMIInfo *one);
+
+
 public:
 	SysInfo();
 	~SysInfo();
 	// Отправка данных в БД MySQL
 	HRESULT PushMysqlTest();
-	HRESULT PushMysqlCPU();
-	HRESULT PushMysqlBIOS();
-	HRESULT PushMysqlDISK();
+
 
 	// Получение данных из WMI
-	HRESULT CPUInfo();
-	HRESULT BIOSInfo();
-	HRESULT PartitionInfo();
-	HRESULT DiskInfo();
-	HRESULT KeyboardInfo();
-	HRESULT MBInfo(); //
-	HRESULT MouseInfo();//
-	HRESULT VAInfo();//
-	HRESULT DisplayInfo();//
-	HRESULT IfInfo();//
-	HRESULT AppInfo();
-	  
 
-	// Отображение данных в stdout
-	HRESULT ShowProcessor();
-	HRESULT ShowBIOS();
-	HRESULT ShowDISK();
-	HRESULT ShowPartition();
-	HRESULT ShowKeyboard();
+	HRESULT WMIData(WMIInfo *data);
+	HRESULT WMIData(WMIInfoMany *data);
+	HRESULT WMIData(std::vector <WMIInfo> *data, WMIInfo * st);
+
+	// Отобразить данные в stdout
+	HRESULT ShowWMIdata(WMIInfo *data);
+	HRESULT ShowWMIdata(WMIInfoMany *data);
+	HRESULT ShowWMIdata(std::vector <WMIInfo> *data, WMIInfo * st);
+	// Отправить данные в MySQL
+	HRESULT PushMysql(WMIInfo *data);
+	HRESULT PushMysql(WMIInfoMany *data);
+
+
+
+
 
 };
+
+
 
 
 
