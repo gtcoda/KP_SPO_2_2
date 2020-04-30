@@ -72,6 +72,11 @@ SysInfo::SysInfo(){
 	ShowWMIdata(&Pointer);
 	PushMysql(&Pointer);
 
+	//Monitor
+	ManyWMIInfo(&DesktopMonitor, &DesktopMonitor_I);
+	WMIData(&DesktopMonitor);
+	ShowWMIdata(&DesktopMonitor);
+	PushMysql(&DesktopMonitor);
 	
 
 	WMIData(&Process, &Process_info);
