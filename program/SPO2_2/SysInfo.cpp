@@ -32,6 +32,7 @@ SysInfo::SysInfo(){
 	}
 	delete stmt;
 
+
 // BIOS
 	WMIData(&BIOS);
 	ShowWMIdata(&BIOS);
@@ -47,6 +48,7 @@ SysInfo::SysInfo(){
 	WMIData(&DISK);
 	ShowWMIdata(&DISK);
 	PushMysql(&DISK);
+
 }
 
 // Деструктор
@@ -196,7 +198,6 @@ HRESULT SysInfo::WMIData(WMIInfo *data) {
 	IEnumWbemClassObject * pEnumerator = NULL;
 
 	std::string q = "SELECT * FROM " + data->WMIClass;
-
 	objWMI.Get((_bstr_t)ConvertMBSToBSTR(q), &pEnumerator);
 
 	hr = WBEM_S_NO_ERROR;
@@ -273,11 +274,7 @@ HRESULT SysInfo::WMIData(WMIInfoMany *data) {
 						hr = VariantChangeType(&vtProp, &vtProp, 0, VT_BSTR);
 						data->ATTR[i][n].Value = ConvertBSTRToMBS(vtProp.bstrVal);
 					}
-
-
 				}
-
-
 				apObj[i]->Release();
 			}
 
@@ -315,5 +312,3 @@ HRESULT SysInfo::ShowWMIdata(WMIInfoMany *data) {
 	}
 	return S_OK;
 }
-
-

@@ -19,25 +19,6 @@ int main(int iArgCnt, char ** argv)
 	// Экземпляр SysInfo
 	SysInfo info;
 
-
-	
-	// Отправим в БД
-	//info.PushMysqlCPU();
-	//info.PushMysqlBIOS();
-	//info.PushMysqlDISK();
-
-
-	// Отобразим в stdout
-	/* info.ShowProcessor();
-	cout << "==================================" << endl;
-	info.ShowBIOS();
-	cout << "==================================" << endl;
-	info.ShowDISK();
-	cout << "==================================" << endl;
-	info.ShowPartition();
-	*/
-
-
 	system("pause");
 	return 0;
 }

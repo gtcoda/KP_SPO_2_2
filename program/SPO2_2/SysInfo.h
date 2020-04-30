@@ -88,6 +88,13 @@ struct DiskInfo {
 };
 
 
+struct DISK_t {
+	DiskInfo DISK_I[10];
+	int count = 0;
+};
+
+
+
 class SysInfo 
 {
 private:
@@ -148,8 +155,6 @@ private:
 			// Конец инициализации внутренней структyры info	
 			} };
 
-
-
 	
 	//MySQL 
 	sql::Driver *driver;
@@ -174,6 +179,7 @@ public:
 
 
 	// Получение данных из WMI
+
 	HRESULT WMIData(WMIInfo *data);
 	HRESULT WMIData(WMIInfoMany *data);
 	// Отобразить данные в stdout
@@ -182,6 +188,7 @@ public:
 	// Отправить данные в MySQL
 	HRESULT PushMysql(WMIInfo *data);
 	HRESULT PushMysql(WMIInfoMany *data);
+
 
 };
 
