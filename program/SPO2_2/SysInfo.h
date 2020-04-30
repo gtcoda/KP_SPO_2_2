@@ -8,6 +8,7 @@ using namespace std;
 #include <comdef.h>
 #include <Wbemidl.h>
 #include <algorithm>
+#include <vector>
 
 #include "ControlWMI.h"
 #include "ConvertStr.h"
@@ -26,11 +27,11 @@ using namespace std;
 #include <ctime>
 
 // Максимальное количество свойств
-//#define MAX_PROPERTY 15
 const int MAX_PROPERTY = 15;
 // Максимальное количество экземпляров
-//#define MAX_INSTANCE 10
 const int MAX_INSTANCE = 10;
+// Максимальное количество классов в структуре
+const int MAX_CLASS = 8;
 
 // Структура свойства
 struct info {
@@ -52,46 +53,19 @@ struct WMIInfoMany {
 	std::string DescriptionIterator; // Описание итерации
 	std::string WMIClass;
 	std::string Description;
-	std::string Table;			
+	std::string Table;		
+	int Count;						// Количество заполненых элементов
 	info ATTR[MAX_INSTANCE][MAX_PROPERTY];
 };
 
+// Структура набора свойств нескольких классов отдающего один экземпляр
 
-// Структура информаци о CPU
-struct CPUInfo {
-	std::string Name;	// имя
-	std::string Arc;	// Архитектура
-	int64_t AddressWidth;	// Разрядность
-	int64_t MaxCS;			// Максимальная частота ядра
-	int64_t CurCS;			// Текущая частота ядра
-	int64_t BusS;			// Частота шины
-	int64_t NCore;			// Количество ядер
-	int64_t EnCore;			// Количество активных ядер
-	int64_t LogicCore;		// Количество логических ядер
-	int64_t L2;				// Размер L2
-	int64_t L3;				// Размер L3
-};
-
-// Структура информации о BIOS
-struct BIOSInfo {
-	std::string Version;	// Версия 
-	std::string Caption;	// Подпись
-	std::string Manufacturer;	// Производитель
+struct WMIInfoManyClass {
+	WMIInfo Info[MAX_CLASS]; //Структуры для каждого класса
 };
 
 
-// Структура информации о дисках
-struct DiskInfo {
-	std::string Name;	// Название 
-	std::string Model;	// Модель
-	int64_t Size;	// Обьем
-};
 
-
-struct DISK_t {
-	DiskInfo DISK_I[10];
-	int count = 0;
-};
 
 
 
@@ -125,13 +99,50 @@ private:
 			"DISK",
 			{
 		// Начало инициализации внутренней структуры info
-			{"Size", "Размер", ""},
+			{"Size", "Размер [б]", ""},
 			{"Model", "Модель", ""},
 			{"Caption", "Название", ""}
 		// Конец инициализации внутренней структyры info	
 			} };
 
 	WMIInfoMany DISK = {"Диск №"};
+
+// Информация о partition
+
+	WMIInfo PARTITION_I = {
+		//WMI CLASS
+			"Win32_LogicalDisk",
+			"PARTITION_INFO",
+			"PART",
+			{
+		// Начало инициализации внутренней структуры info
+			{"Size", "Размер [б]", ""},
+			{"FileSystem", "Файловая система", ""},
+			{"FreeSpace", "Свободный обьем [б]", ""},
+			{"Caption", "Название", ""}
+			// Конец инициализации внутренней структyры info	
+				} };
+
+	WMIInfoMany PARTITION = { "Раздел №" };
+
+
+// Информация о клавиатуре
+
+WMIInfo KEYBOARD_I = {
+	//WMI CLASS
+		"Win32_Keyboard",
+		"KEYBOARD_INFO",
+		"KEYBOARD",
+		{
+	// Начало инициализации внутренней структуры info
+		{"Description", "Описание", ""},
+		{"DeviceID", "Идентификатор устройства", ""},
+		{"Caption", "Название", ""},
+		{"NumberOfFunctionKeys", "Кол-во ФК", ""}
+		// Конец инициализации внутренней структyры info	
+			} };
+
+WMIInfoMany KEYBOARD = { "Клавиатура №" };
 
 //Информация о CPU
 	WMIInfo CPU = {
@@ -156,6 +167,93 @@ private:
 			} };
 
 	
+	//Информация о Материнской Плате
+	WMIInfoManyClass BB = { {
+			{// Первый класс на разбор
+				"Win32_BaseBoard",
+				"BaseBoard_INFO",
+				"BaseBoard",
+				{// Начало инициализации внутренней структуры info	
+					{"Caption", "Наименование Устройства", ""},
+					{"Description", "Описание", ""},
+					{"Manufacturer", "Производитель", ""},
+					{"Product", "Тип", ""},
+					{"SerialNumber", "Серийный номер", ""},
+					{"Tag", "Идентификатор", ""},
+					{"Version", "Версия", ""}
+				}// Конец инициализации внутренней структyры info	
+			},
+			{// Второй класс на разбор
+				"Win32_MotherboardDevice",
+				"BaseBoard_INFO",
+				"BaseBoard",
+				{// Начало инициализации внутренней структуры info	
+					{"Caption", "Наименование Устройства", ""},
+					{"Description", "Описание", ""},
+					{"SystemName ", "Имя компьютера", ""},
+					{"DeviceID ", "Идентификатор", ""},
+					{"PrimaryBusType ", "Тип первичной шины", ""},
+					{"SecondaryBusType ", "Тип вторичной шины", ""},
+				}// Конец инициализации внутренней структyры info	
+			},
+		{}
+
+	} };
+
+
+
+	WMIInfo BaseBoard = {
+		//WMI CLASS
+			"Win32_BaseBoard",
+			"BaseBoard_INFO",
+			"BaseBoard",
+			{
+		// Начало инициализации внутренней структуры info	
+			{"Caption", "Наименование Устройства", ""},
+			{"Description", "Описание", ""},
+			{"Manufacturer", "Производитель", ""},
+			{"Product", "Тип", ""},
+			{"SerialNumber", "Серийный номер", ""},
+			{"Tag", "Идентификатор", ""},
+			{"Version", "Версия", ""}
+			// Конец инициализации внутренней структyры info	
+			} };
+
+
+	// Информация о мыши
+	WMIInfo Pointer = {
+		//WMI CLASS
+			"Win32_PointingDevice",
+			"Pointer_INFO",
+			"Pointer",
+			{
+		// Начало инициализации внутренней структуры info	
+			{"Caption", "Наименование Устройства", ""},
+			{"Description", "Описание", ""},
+			{"Manufacturer", "Производитель", ""},
+			{"HardwareType", "Тип", ""},
+			{"DeviceID", "Идентификатор", ""},
+			{"DeviceInterface ", "Тип интерфейса", ""},
+			{"NumberOfButtons ", "Количество кнопок", ""}
+			// Конец инициализации внутренней структyры info	
+			} };
+
+
+	// Работа с процессами
+	std::vector <WMIInfo> Process;
+	// Описание получаемых параметров
+	WMIInfo Process_info = {
+		//WMI CLASS
+			"Win32_Process",
+			"Process_INFO",
+			"Process",
+			{
+		// Начало инициализации внутренней структуры info	
+			{"Name", "Имя", ""},
+			{"Handle", "Id", ""}
+			// Конец инициализации внутренней структyры info	
+			} };
+
 	//MySQL 
 	sql::Driver *driver;
 	sql::Connection *con;
@@ -182,15 +280,23 @@ public:
 
 	HRESULT WMIData(WMIInfo *data);
 	HRESULT WMIData(WMIInfoMany *data);
+	HRESULT WMIData(std::vector <WMIInfo> *data, WMIInfo * st);
+
 	// Отобразить данные в stdout
 	HRESULT ShowWMIdata(WMIInfo *data);
 	HRESULT ShowWMIdata(WMIInfoMany *data);
+	HRESULT ShowWMIdata(std::vector <WMIInfo> *data, WMIInfo * st);
 	// Отправить данные в MySQL
 	HRESULT PushMysql(WMIInfo *data);
 	HRESULT PushMysql(WMIInfoMany *data);
 
 
+
+
+
 };
+
+
 
 
 

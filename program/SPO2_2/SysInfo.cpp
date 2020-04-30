@@ -33,22 +33,49 @@ SysInfo::SysInfo(){
 	delete stmt;
 
 
-// BIOS
+	// BIOS
 	WMIData(&BIOS);
 	ShowWMIdata(&BIOS);
 	PushMysql(&BIOS);
 
-// CPU
+	// CPU
 	WMIData(&CPU);
 	ShowWMIdata(&CPU);
 	PushMysql(&CPU);
 
-// DISK
+	// DISK
 	ManyWMIInfo(&DISK, &DISK_I);
 	WMIData(&DISK);
 	ShowWMIdata(&DISK);
 	PushMysql(&DISK);
 
+
+	// PARTITION
+	ManyWMIInfo(&PARTITION, &PARTITION_I);
+	WMIData(&PARTITION);
+	ShowWMIdata(&PARTITION);
+	PushMysql(&PARTITION);
+
+	// KEYBOARD
+	ManyWMIInfo(&KEYBOARD, &KEYBOARD_I);
+	WMIData(&KEYBOARD);
+	ShowWMIdata(&KEYBOARD);
+	PushMysql(&KEYBOARD);
+
+	// BaseBoard
+	WMIData(&BaseBoard);
+	ShowWMIdata(&BaseBoard);
+	PushMysql(&BaseBoard);
+
+	// BaseBoard
+	WMIData(&Pointer);
+	ShowWMIdata(&Pointer);
+	PushMysql(&Pointer);
+
+	
+
+	WMIData(&Process, &Process_info);
+	ShowWMIdata(&Process, &Process_info);
 }
 
 // Деструктор
@@ -56,7 +83,7 @@ SysInfo::~SysInfo() {
 	delete con;
 }
 
-
+// Заполнение структуры WMIInfoMany из WMIInfo
 HRESULT SysInfo::ManyWMIInfo(WMIInfoMany *many, WMIInfo *one) {
 	many->Description = one->Description;
 	many->WMIClass = one->WMIClass;
@@ -276,6 +303,7 @@ HRESULT SysInfo::WMIData(WMIInfoMany *data) {
 					}
 				}
 				apObj[i]->Release();
+				data->Count++;
 			}
 
 		}
@@ -285,9 +313,69 @@ HRESULT SysInfo::WMIData(WMIInfoMany *data) {
 
 }
 
+
+// Получение информации из WMI множества экземпляров
+HRESULT SysInfo::WMIData(std::vector <WMIInfo> *data, WMIInfo *st) {
+	HRESULT hr;
+	int count = 0;
+	WMIInfo res;
+	IEnumWbemClassObject * pEnumerator = NULL;
+
+	std::string q = "SELECT * FROM " + st->WMIClass;
+
+	objWMI.Get((_bstr_t)ConvertMBSToBSTR(q), &pEnumerator);
+
+	hr = WBEM_S_NO_ERROR;
+	// Final Next will return WBEM_S_FALSE
+	while (WBEM_S_NO_ERROR == hr)
+	{
+		ULONG            uReturned;
+		IWbemClassObject*    apObj[10];
+
+		hr = pEnumerator->Next(WBEM_INFINITE, 10, apObj, &uReturned);
+
+		if (SUCCEEDED(hr)) {
+			// Перебираем обьекты
+			for (ULONG i = 0; i < uReturned; i++) {
+
+				data->push_back(res);
+
+
+				// Перебираем свойства
+				for (ULONG n = 0; (n < MAX_PROPERTY) & (st->ATTR[n].Property != ""); n++) {
+					VARIANT vtProp;
+					HRESULT hro;
+					_bstr_t prName = ConvertMBSToBSTR(st->ATTR[n].Property);
+					
+					
+					hro = apObj[i]->Get(prName, 0, &vtProp, 0, 0);
+					if (!FAILED(hro)) {
+						// Преобразуем ответ в строку
+						hr = VariantChangeType(&vtProp, &vtProp, 0, VT_BSTR);
+						
+						
+					
+						data->at(count).ATTR[n].Name = st->ATTR[n].Name;
+						data->at(count).ATTR[n].Property = st->ATTR[n].Property;
+						data->at(count).ATTR[n].Value = ConvertBSTRToMBS(vtProp.bstrVal);
+						
+					}
+				}
+				apObj[i]->Release();
+				count++;
+			}
+
+		}
+	}
+
+	return S_OK;
+
+}
+
+
 /*===================== Отображение информации =====================*/
 HRESULT SysInfo::ShowWMIdata(WMIInfo *data) {
-
+	cout << endl;
 	cout << "=======    " << data->Description << "   =======" << endl;
 
 	for (ULONG n = 0; (n < MAX_PROPERTY) & (data->ATTR[n].Name != ""); n++) {
@@ -299,7 +387,7 @@ HRESULT SysInfo::ShowWMIdata(WMIInfo *data) {
 
 
 HRESULT SysInfo::ShowWMIdata(WMIInfoMany *data) {
-
+	cout << endl;
 	cout << "=======    " << data->Description << "   =======" << endl;
 	for (int i = 0; (i < MAX_INSTANCE) & (data->ATTR[i][0].Value != ""); i++) {
 		
@@ -310,5 +398,28 @@ HRESULT SysInfo::ShowWMIdata(WMIInfoMany *data) {
 		}
 
 	}
+	return S_OK;
+}
+
+
+HRESULT SysInfo::ShowWMIdata(std::vector <WMIInfo> *data, WMIInfo *st) {
+	cout << endl;
+	cout << "=======    " << st->Description << "   =======" << endl;
+
+	int count = data->size();
+
+	for (WMIInfo inf : *data) {
+		inf.ATTR;
+
+		for (int n = 0; (n < MAX_PROPERTY) & (inf.ATTR[n].Name != ""); n++) {
+			cout  << inf.ATTR[n].Value << ";" ;
+		}
+		cout << endl;
+	}
+		
+
+
+
+
 	return S_OK;
 }
