@@ -87,12 +87,6 @@ struct DiskInfo {
 	int64_t Size;	// ־בüול
 };
 
-struct DISK_t {
-	DiskInfo DISK_I[10];
-	int count = 0;
-};
-
-
 
 class SysInfo 
 {
