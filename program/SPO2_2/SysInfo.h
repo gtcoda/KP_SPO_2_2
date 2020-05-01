@@ -246,11 +246,12 @@ WMIInfoMany KEYBOARD = { "Клавиатура №" };
 		//WMI CLASS
 			"Win32_Process",
 			"Process_INFO",
-			"Process",
+			"PROCESS",
 			{
 		// Начало инициализации внутренней структуры info	
-			{"Name", "Имя", ""},
-			{"Handle", "Id", ""}
+			{"Handle", "Id", ""},
+			{"Name", "Имя", ""}
+			
 			// Конец инициализации внутренней структyры info	
 			} };
 
@@ -289,6 +290,7 @@ public:
 	// Отправить данные в MySQL
 	HRESULT PushMysql(WMIInfo *data);
 	HRESULT PushMysql(WMIInfoMany *data);
+	HRESULT PushMysql(std::vector <WMIInfo> *data, WMIInfo * st);
 
 
 

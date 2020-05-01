@@ -76,6 +76,7 @@ SysInfo::SysInfo(){
 
 	WMIData(&Process, &Process_info);
 	ShowWMIdata(&Process, &Process_info);
+	PushMysql(&Process, &Process_info);
 }
 
 // Деструктор
@@ -154,8 +155,7 @@ HRESULT SysInfo::PushMysql(WMIInfo *data) {
 		cout << "# ERR: SQLException in " << __FILE__;
 		cout << "(" << __FUNCTION__ << ") on line " << __LINE__ << endl;
 		cout << "# ERR: " << e.what();
-		cout << " (MySQL error code: " << e.getErrorCode();
-		cout << ", SQLState: " << e.getSQLState() << " )" << endl;
+		cout << " (MySQL error code: " << e.getErrorCode() << " )" << endl;
 	}
 
 	return S_OK;
@@ -210,13 +210,72 @@ HRESULT SysInfo::PushMysql(WMIInfoMany *data) {
 		cout << "# ERR: SQLException in " << __FILE__;
 		cout << "(" << __FUNCTION__ << ") on line " << __LINE__ << endl;
 		cout << "# ERR: " << e.what();
-		cout << " (MySQL error code: " << e.getErrorCode();
-		cout << ", SQLState: " << e.getSQLState() << " )" << endl;
+		cout << " (MySQL error code: " << e.getErrorCode() << " )" << endl;
 	}
 
 	return S_OK;
 
 }
+
+HRESULT SysInfo::PushMysql(std::vector <WMIInfo> *data, WMIInfo * st) {
+	
+	try {
+		
+		
+		for (WMIInfo inf : *data) {
+			sql::PreparedStatement *prep_stmt;
+			std::string sql;
+			sql = "INSERT INTO " + st->Table + "(";
+			sql += "id,";
+			for (int i = 0; (i < MAX_PROPERTY) & (inf.ATTR[i].Name != ""); i++) {
+				sql += inf.ATTR[i].Property + ",";
+			}
+			// Удалим лишнюю запятую
+			if (sql.size() > 0)  sql.resize(sql.size() - 1);
+
+			sql += ") VALUES(?,";
+
+			for (int i = 0; (i < MAX_PROPERTY) & (inf.ATTR[i].Name != ""); i++) {
+				sql += "?,";
+			}
+			// Удалим лишнюю запятую
+			if (sql.size() > 0)  sql.resize(sql.size() - 1);
+
+			sql += ")";
+
+
+			prep_stmt = con->prepareStatement(sql::SQLString(sql.c_str()));
+			prep_stmt->setInt64(1, id);
+			for (int i = 0; (i < MAX_PROPERTY) & (inf.ATTR[i].Name != ""); i++) {
+				prep_stmt->setString(i + 2, sql::SQLString(inf.ATTR[i].Value.c_str()));
+			}
+
+			prep_stmt->execute();
+
+			
+
+		}
+
+
+
+
+
+	}
+	catch (sql::SQLException &e) {
+		cout << "# ERR: SQLException in " << __FILE__;
+		cout << "(" << __FUNCTION__ << ") on line " << __LINE__ << endl;
+		cout << "# ERR: " << e.what();
+		cout << " (MySQL error code: " << e.getErrorCode() << " )" << endl;
+	}
+
+	return S_OK;
+	
+	
+	
+	
+
+}
+
 /*===================== Получение информации =====================*/
 
 // Получение информации из WMI один экземпляр
@@ -410,11 +469,17 @@ HRESULT SysInfo::ShowWMIdata(std::vector <WMIInfo> *data, WMIInfo *st) {
 
 	for (WMIInfo inf : *data) {
 		inf.ATTR;
+		std:string str = "";
 
 		for (int n = 0; (n < MAX_PROPERTY) & (inf.ATTR[n].Name != ""); n++) {
-			cout  << inf.ATTR[n].Value << ";" ;
+			str += inf.ATTR[n].Value;
+			str += "\t";
 		}
-		cout << endl;
+		str.erase(str.length()-1,1);
+
+		str += ";";
+
+		cout << str << endl ;
 	}
 		
 
