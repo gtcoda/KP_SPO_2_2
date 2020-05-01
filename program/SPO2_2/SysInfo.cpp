@@ -72,11 +72,24 @@ SysInfo::SysInfo(){
 	ShowWMIdata(&Pointer);
 	PushMysql(&Pointer);
 
+	// Uptime
+	UpTime(&UPTIME);
+	ShowWMIdata(&UPTIME);
+	PushMysql(&UPTIME);
+
+
 	
 
 	WMIData(&Process, &Process_info);
 	ShowWMIdata(&Process, &Process_info);
 	PushMysql(&Process, &Process_info);
+
+
+
+
+
+
+
 }
 
 // Деструктор
@@ -438,7 +451,7 @@ HRESULT SysInfo::ShowWMIdata(WMIInfo *data) {
 	cout << "=======    " << data->Description << "   =======" << endl;
 
 	for (ULONG n = 0; (n < MAX_PROPERTY) & (data->ATTR[n].Name != ""); n++) {
-		cout << data->ATTR[n].Name << " : " << data->ATTR[n].Value << ";" << endl;
+		cout << data->ATTR[n].Name << ": " << data->ATTR[n].Value << ";" << endl;
 	}
 
 	return S_OK;
@@ -453,7 +466,7 @@ HRESULT SysInfo::ShowWMIdata(WMIInfoMany *data) {
 		cout << data->DescriptionIterator << " "<< i << endl;
 		
 		for (int n = 0; (n < MAX_PROPERTY) & (data->ATTR[i][n].Name != ""); n++) {
-			cout << data->ATTR[i][n].Name << " : " << data->ATTR[i][n].Value << ";" << endl;
+			cout << data->ATTR[i][n].Name << ": " << data->ATTR[i][n].Value << ";" << endl;
 		}
 
 	}
@@ -465,11 +478,10 @@ HRESULT SysInfo::ShowWMIdata(std::vector <WMIInfo> *data, WMIInfo *st) {
 	cout << endl;
 	cout << "=======    " << st->Description << "   =======" << endl;
 
-	int count = data->size();
 
 	for (WMIInfo inf : *data) {
 		inf.ATTR;
-		std:string str = "";
+		std::string str = "";
 
 		for (int n = 0; (n < MAX_PROPERTY) & (inf.ATTR[n].Name != ""); n++) {
 			str += inf.ATTR[n].Value;
@@ -488,3 +500,74 @@ HRESULT SysInfo::ShowWMIdata(std::vector <WMIInfo> *data, WMIInfo *st) {
 
 	return S_OK;
 }
+
+HRESULT  SysInfo::UpTime(WMIInfo *upt) {
+	LONGLONG uptime = GetTickCount64();
+
+	const long day_t = 1000 * 60 * 60 * 24;
+	const long hours_t = 1000 * 60 * 60;
+	const long min_t = 1000 * 60;
+	const long second_t = 1000;
+
+	int64_t day = uptime / day_t;
+	uptime = uptime % day_t;
+	
+	int64_t hours = uptime / hours_t;
+	uptime = uptime % hours_t;
+
+	int64_t min = uptime / min_t;
+	uptime = uptime % min_t;
+
+	int64_t second = uptime / second_t;
+	uptime = uptime % second_t;
+
+	for (int i = 0; i < MAX_PROPERTY; i++) {
+		if (upt->ATTR[i].Property == "Day") {
+			upt->ATTR[i].Value = to_string(day);
+			continue;
+		}
+		if (upt->ATTR[i].Property == "Hours") {
+			upt->ATTR[i].Value = to_string(hours);
+			continue;
+		}
+		if (upt->ATTR[i].Property == "Min") {
+			upt->ATTR[i].Value = to_string(min);
+			continue;
+		}
+		if (upt->ATTR[i].Property == "Second") {
+			upt->ATTR[i].Value = to_string(second);
+			continue;
+		}
+	}
+
+
+	return S_OK;
+}
+
+
+/*
+HRESULT  SysInfo::ShowUpTime(LONGLONG *uptime, WMIInfo *upt) {
+
+	const long day_t = 1000 * 60 * 60 * 24;
+	const long hours_t = 1000 * 60 * 60;
+	const long min_t = 1000 * 60;
+	const long second_t = 1000;
+
+	long day = *uptime / day_t;
+	*uptime = *uptime % day_t;
+
+	long hours = *uptime / hours_t;
+	*uptime = *uptime % hours_t;
+
+	long min = *uptime / min_t;
+	*uptime = *uptime % min_t;
+
+	long second = *uptime / second_t;
+	*uptime = *uptime % second_t;
+
+
+
+	cout << "UpTime: " << day << "d " << hours << "h " << min << "m " << second << "s;"  << endl  ;
+	return S_OK;
+}
+*/

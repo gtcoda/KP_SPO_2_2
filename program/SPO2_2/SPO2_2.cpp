@@ -18,7 +18,11 @@ int main(int iArgCnt, char ** argv)
 	
 	// Экземпляр SysInfo
 	SysInfo info;
+	
+
 
 	system("pause");
 	return 0;
 }
+
+
