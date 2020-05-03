@@ -1,7 +1,7 @@
 #include "ControlWMI.h"
 
 
-// Êîíñòðóêòîð. Ïîäêëþ÷åíèå ê WMI
+// ÐšÐ¾Ð½ÑÑ‚Ñ€ÑƒÐºÑ‚Ð¾Ñ€. ÐŸÐ¾Ð´ÐºÐ»ÑŽÑ‡ÐµÐ½Ð¸Ðµ Ðº WMI
 ControlWMI::ControlWMI() {
 	HRESULT hr;
 		
@@ -113,7 +113,7 @@ ControlWMI::ControlWMI() {
 HRESULT ControlWMI::Get(BSTR Query, IEnumWbemClassObject** pEnumerator) {
 	HRESULT hr;
 
-	// Îáüåêò CIM
+	// ÐžÐ±ÑŒÐµÐºÑ‚ CIM
 	hr = pSvc->ExecQuery(
 		bstr_t("WQL"),
 		bstr_t(Query),
@@ -124,7 +124,7 @@ HRESULT ControlWMI::Get(BSTR Query, IEnumWbemClassObject** pEnumerator) {
 	return hr;
 }
 
-// Äåñòðóêòîð.
+// Ð”ÐµÑÑ‚Ñ€ÑƒÐºÑ‚Ð¾Ñ€.
 ControlWMI::~ControlWMI() {
 	pSvc->Release();
 	pLoc->Release();

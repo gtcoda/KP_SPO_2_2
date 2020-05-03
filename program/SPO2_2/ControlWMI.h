@@ -18,7 +18,7 @@ struct ProcessorProp {
 
 
 
-class ControlWMI // определение класса
+class ControlWMI // РѕРїСЂРµРґРµР»РµРЅРёРµ РєР»Р°СЃСЃР°
 {
 private:
 	IWbemServices * pSvc = NULL;
@@ -28,7 +28,7 @@ public:
 	ControlWMI();
 	~ControlWMI();
 
-	// Получение результирующего набора обьектов
+	// РџРѕР»СѓС‡РµРЅРёРµ СЂРµР·СѓР»СЊС‚РёСЂСѓСЋС‰РµРіРѕ РЅР°Р±РѕСЂР° РѕР±СЊРµРєС‚РѕРІ
 	HRESULT Get(BSTR Query, IEnumWbemClassObject** pEnumerator);
 
 };

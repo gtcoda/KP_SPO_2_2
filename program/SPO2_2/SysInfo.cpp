@@ -164,7 +164,7 @@ HRESULT SysInfo::PushMysql(WMIInfo *data) {
 		prep_stmt = con->prepareStatement(sql::SQLString(sql.c_str()));
 		prep_stmt->setInt64(1, id);
 		for (int i = 0; (i < MAX_PROPERTY) & (data->ATTR[i].Name != ""); i++) {
-			prep_stmt->setString(i + 2, sql::SQLString(data->ATTR[i].Value.c_str()));
+			prep_stmt->setString(i + 2, sql::SQLString( cp1251_to_utf8(data->ATTR[i].Value.c_str()).c_str() ));
 		}
 
 		prep_stmt->execute();
@@ -215,7 +215,7 @@ HRESULT SysInfo::PushMysql(WMIInfoMany *data) {
 			prep_stmt = con->prepareStatement(sql::SQLString(sql.c_str()));
 			prep_stmt->setInt64(1, id);
 			for (int n = 0; (n < MAX_PROPERTY) & (data->ATTR[i][n].Name != ""); n++) {
-				prep_stmt->setString(n + 2, sql::SQLString(data->ATTR[i][n].Value.c_str()));
+				prep_stmt->setString(n + 2, sql::SQLString( cp1251_to_utf8( data->ATTR[i][n].Value.c_str()).c_str() ));
 			}
 
 			prep_stmt->execute();
