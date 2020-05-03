@@ -79,6 +79,12 @@ SysInfo::SysInfo() {
 	ShowWMIdata(&DesktopMonitor);
 	PushMysql(&DesktopMonitor);
 
+	// NetworkAdapter
+	ManyWMIInfo(&NetworkAdapter, &NetworkAdapter_I);
+	WMIData(&NetworkAdapter);
+	ShowWMIdata(&NetworkAdapter);
+	PushMysql(&NetworkAdapter);
+
 	// Uptime
 	UpTime(&UPTIME);
 	ShowWMIdata(&UPTIME);
