@@ -235,20 +235,20 @@ HRESULT SysInfo::PushMysql(std::vector <WMIInfo> *data, WMIInfo * st) {
 	try {
 		
 		
-		for (WMIInfo inf : *data) {
+		
 			sql::PreparedStatement *prep_stmt;
 			std::string sql;
 			sql = "INSERT INTO " + st->Table + "(";
 			sql += "id,";
-			for (int i = 0; (i < MAX_PROPERTY) & (inf.ATTR[i].Name != ""); i++) {
-				sql += inf.ATTR[i].Property + ",";
+			for (int i = 0; (i < MAX_PROPERTY) & (st->ATTR[i].Name != ""); i++) {
+				sql += st->ATTR[i].Property + ",";
 			}
 			// Удалим лишнюю запятую
 			if (sql.size() > 0)  sql.resize(sql.size() - 1);
 
 			sql += ") VALUES(?,";
 
-			for (int i = 0; (i < MAX_PROPERTY) & (inf.ATTR[i].Name != ""); i++) {
+			for (int i = 0; (i < MAX_PROPERTY) & (st->ATTR[i].Name != ""); i++) {
 				sql += "?,";
 			}
 			// Удалим лишнюю запятую
@@ -256,18 +256,16 @@ HRESULT SysInfo::PushMysql(std::vector <WMIInfo> *data, WMIInfo * st) {
 
 			sql += ")";
 
+			for (WMIInfo inf : *data) {
+				prep_stmt = con->prepareStatement(sql::SQLString(sql.c_str()));
+				prep_stmt->setInt64(1, id);
+				for (int i = 0; (i < MAX_PROPERTY) & (inf.ATTR[i].Name != ""); i++) {
+					prep_stmt->setString(i + 2, sql::SQLString(inf.ATTR[i].Value.c_str()));
+				}
 
-			prep_stmt = con->prepareStatement(sql::SQLString(sql.c_str()));
-			prep_stmt->setInt64(1, id);
-			for (int i = 0; (i < MAX_PROPERTY) & (inf.ATTR[i].Name != ""); i++) {
-				prep_stmt->setString(i + 2, sql::SQLString(inf.ATTR[i].Value.c_str()));
+				prep_stmt->execute();
+				cout << "*";
 			}
-
-			prep_stmt->execute();
-
-			
-
-		}
 
 
 
