@@ -11,11 +11,15 @@ using namespace std;
 #include "SysInfo.h"
 
 
+
+
 int main(int iArgCnt, char ** argv)
 {
 	// переходим в консоли на русский язык
+	//system("chcp 65001 > nul");
 	system("chcp 1251 > nul");
-	
+
+
 	// Экземпляр SysInfo
 	SysInfo info;
 	

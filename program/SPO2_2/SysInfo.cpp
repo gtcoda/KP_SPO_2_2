@@ -1,7 +1,7 @@
 #include "SysInfo.h"
 
-// Êîíñòðóêòîð
-SysInfo::SysInfo(){
+// Конструктор
+SysInfo::SysInfo() {
 	sql::PreparedStatement *prep_stmt;
 	sql::Statement *stmt;
 	sql::ResultSet *res;
@@ -10,11 +10,11 @@ SysInfo::SysInfo(){
 
 	driver = get_driver_instance();
 
-	// Óñòàíàâëèâàåì ñîåäèíåíèå ñ áàçîé
+	// Устанавливаем соединение с базой
 	con = driver->connect(DB_HOST, DB_LOGIN, DB_PASSWORD);
-	// Âûáèàåì ðàáî÷óþ ÁÄ 
+	// Выбиаем рабочую БД
 	con->setSchema(DB_BD);
-	// Ïîëó÷èì id òåêóùåãî ñåàíñà   
+	// Получим id текущего сеанса  
 	prep_stmt = con->prepareStatement("INSERT INTO Manager(time) VALUES (?)");
 	prep_stmt->setInt64(1, (long)t);
 	prep_stmt->execute();
@@ -23,7 +23,7 @@ SysInfo::SysInfo(){
 
 	stmt = con->createStatement();
 	res = stmt->executeQuery("SELECT LAST_INSERT_ID ()");
-	
+
 	if (res->next()) {
 		id = res->getInt(1);
 	}
@@ -73,7 +73,7 @@ SysInfo::SysInfo(){
 	PushMysql(&Pointer);
 
 
-	//Monitor
+	// Monitor
 	ManyWMIInfo(&DesktopMonitor, &DesktopMonitor_I);
 	WMIData(&DesktopMonitor);
 	ShowWMIdata(&DesktopMonitor);
@@ -86,7 +86,7 @@ SysInfo::SysInfo(){
 
 
 
-	
+
 
 	WMIData(&Process, &Process_info);
 	ShowWMIdata(&Process, &Process_info);
@@ -100,17 +100,17 @@ SysInfo::SysInfo(){
 
 }
 
-// Äåñòðóêòîð
+
 SysInfo::~SysInfo() {
 	delete con;
 }
 
-// Çàïîëíåíèå ñòðóêòóðû WMIInfoMany èç WMIInfo
+// Заполнение структуры WMIInfoMany из WMIInfo
 HRESULT SysInfo::ManyWMIInfo(WMIInfoMany *many, WMIInfo *one) {
 	many->Description = one->Description;
 	many->WMIClass = one->WMIClass;
 	many->Table = one->Table;
-	
+
 	for (int n = 0; n < MAX_INSTANCE; n++) {
 		for (int i = 0; (i < MAX_PROPERTY) & (one->ATTR[i].Name != ""); i++) {
 			many->ATTR[n][i] = one->ATTR[i];
@@ -134,7 +134,7 @@ HRESULT SysInfo::PushMysqlTest() {
 
 	return S_OK;
 }
-/*===================== Îòïðàâêà â ÁÄ =====================*/
+/*===================== Отправка в БД =====================*/
 HRESULT SysInfo::PushMysql(WMIInfo *data) {
 
 	try {
@@ -142,20 +142,20 @@ HRESULT SysInfo::PushMysql(WMIInfo *data) {
 		sql::PreparedStatement *prep_stmt;
 
 		std::string sql;
-		sql = "INSERT INTO " + data->Table + "("; 
+		sql = "INSERT INTO " + data->Table + "(";
 		sql += "id,";
 		for (int i = 0; (i < MAX_PROPERTY) & (data->ATTR[i].Name != ""); i++) {
 			sql += data->ATTR[i].Property + ",";
 		}
-		// Óäàëèì ëèøíþþ çàïÿòóþ
+		// Удалим лишнюю запятую
 		if (sql.size() > 0)  sql.resize(sql.size() - 1);
 
 		sql += ") VALUES(?,";
-		
+
 		for (int i = 0; (i < MAX_PROPERTY) & (data->ATTR[i].Name != ""); i++) {
 			sql += "?,";
 		}
-		// Óäàëèì ëèøíþþ çàïÿòóþ
+		// Удалим лишнюю запятую
 		if (sql.size() > 0)  sql.resize(sql.size() - 1);
 
 		sql += ")";
@@ -164,9 +164,9 @@ HRESULT SysInfo::PushMysql(WMIInfo *data) {
 		prep_stmt = con->prepareStatement(sql::SQLString(sql.c_str()));
 		prep_stmt->setInt64(1, id);
 		for (int i = 0; (i < MAX_PROPERTY) & (data->ATTR[i].Name != ""); i++) {
-			prep_stmt->setString(i+2, sql::SQLString(data->ATTR[i].Value.c_str()));
+			prep_stmt->setString(i + 2, sql::SQLString(data->ATTR[i].Value.c_str()));
 		}
-		
+
 		prep_stmt->execute();
 
 		delete prep_stmt;
@@ -198,7 +198,7 @@ HRESULT SysInfo::PushMysql(WMIInfoMany *data) {
 			for (int n = 0; (n < MAX_PROPERTY) & (data->ATTR[i][n].Name != ""); n++) {
 				sql += data->ATTR[i][n].Property + ",";
 			}
-			// Óäàëèì ëèøíþþ çàïÿòóþ
+			// Удалим лишнюю запятую
 			if (sql.size() > 0)  sql.resize(sql.size() - 1);
 
 			sql += ") VALUES(?,";
@@ -206,7 +206,7 @@ HRESULT SysInfo::PushMysql(WMIInfoMany *data) {
 			for (int n = 0; (n < MAX_PROPERTY) & (data->ATTR[i][n].Name != ""); n++) {
 				sql += "?,";
 			}
-			// Óäàëèì ëèøíþþ çàïÿòóþ
+			// Удалим лишнюю запятую
 			if (sql.size() > 0)  sql.resize(sql.size() - 1);
 
 			sql += ")";
@@ -239,41 +239,41 @@ HRESULT SysInfo::PushMysql(WMIInfoMany *data) {
 }
 
 HRESULT SysInfo::PushMysql(std::vector <WMIInfo> *data, WMIInfo * st) {
-	
+
 	try {
-		
-		
-		
-			sql::PreparedStatement *prep_stmt;
-			std::string sql;
-			sql = "INSERT INTO " + st->Table + "(";
-			sql += "id,";
-			for (int i = 0; (i < MAX_PROPERTY) & (st->ATTR[i].Name != ""); i++) {
-				sql += st->ATTR[i].Property + ",";
+
+
+
+		sql::PreparedStatement *prep_stmt;
+		std::string sql;
+		sql = "INSERT INTO " + st->Table + "(";
+		sql += "id,";
+		for (int i = 0; (i < MAX_PROPERTY) & (st->ATTR[i].Name != ""); i++) {
+			sql += st->ATTR[i].Property + ",";
+		}
+		// Удалим лишнюю запятую
+		if (sql.size() > 0)  sql.resize(sql.size() - 1);
+
+		sql += ") VALUES(?,";
+
+		for (int i = 0; (i < MAX_PROPERTY) & (st->ATTR[i].Name != ""); i++) {
+			sql += "?,";
+		}
+		// Удалим лишнюю запятую
+		if (sql.size() > 0)  sql.resize(sql.size() - 1);
+
+		sql += ")";
+
+		for (WMIInfo inf : *data) {
+			prep_stmt = con->prepareStatement(sql::SQLString(sql.c_str()));
+			prep_stmt->setInt64(1, id);
+			for (int i = 0; (i < MAX_PROPERTY) & (inf.ATTR[i].Name != ""); i++) {
+				prep_stmt->setString(i + 2, sql::SQLString(inf.ATTR[i].Value.c_str()));
 			}
-			// Óäàëèì ëèøíþþ çàïÿòóþ
-			if (sql.size() > 0)  sql.resize(sql.size() - 1);
 
-			sql += ") VALUES(?,";
-
-			for (int i = 0; (i < MAX_PROPERTY) & (st->ATTR[i].Name != ""); i++) {
-				sql += "?,";
-			}
-			// Óäàëèì ëèøíþþ çàïÿòóþ
-			if (sql.size() > 0)  sql.resize(sql.size() - 1);
-
-			sql += ")";
-
-			for (WMIInfo inf : *data) {
-				prep_stmt = con->prepareStatement(sql::SQLString(sql.c_str()));
-				prep_stmt->setInt64(1, id);
-				for (int i = 0; (i < MAX_PROPERTY) & (inf.ATTR[i].Name != ""); i++) {
-					prep_stmt->setString(i + 2, sql::SQLString(inf.ATTR[i].Value.c_str()));
-				}
-
-				prep_stmt->execute();
-				cout << "*";
-			}
+			prep_stmt->execute();
+			cout << "*";
+		}
 
 
 
@@ -288,16 +288,16 @@ HRESULT SysInfo::PushMysql(std::vector <WMIInfo> *data, WMIInfo * st) {
 	}
 
 	return S_OK;
-	
-	
-	
-	
+
+
+
+
 
 }
 
-/*===================== Ïîëó÷åíèå èíôîðìàöèè =====================*/
+/*===================== Получение информации =====================*/
 
-// Ïîëó÷åíèå èíôîðìàöèè èç WMI îäèí ýêçåìïëÿð
+// Получение информации из WMI один экземпляр
 HRESULT SysInfo::WMIData(WMIInfo *data) {
 	HRESULT hr;
 	IEnumWbemClassObject * pEnumerator = NULL;
@@ -314,27 +314,27 @@ HRESULT SysInfo::WMIData(WMIInfo *data) {
 
 		hr = pEnumerator->Next(WBEM_INFINITE, 10, apObj, &uReturned);
 
-		if (SUCCEEDED(hr)){
-			// Ïåðåáèðàåì îáüåêòû
-			for (ULONG i = 0; i < uReturned; i++){
-				
-				
-				// Ïåðåáèðàåì ñâîéñòâà
+		if (SUCCEEDED(hr)) {
+			// Перебираем обьекты
+			for (ULONG i = 0; i < uReturned; i++) {
+
+
+				// Перебираем свойства
 				for (ULONG n = 0; (n < MAX_PROPERTY) & (data->ATTR[n].Name != ""); n++) {
 					VARIANT vtProp;
 					HRESULT hro;
 					_bstr_t prName = ConvertMBSToBSTR(data->ATTR[n].Property);
 					hro = apObj[i]->Get(prName, 0, &vtProp, 0, 0);
 					if (!FAILED(hro)) {
-						// Ïðåîáðàçóåì îòâåò â ñòðîêó
+						// Преобразуем ответ в строку
 						hr = VariantChangeType(&vtProp, &vtProp, 0, VT_BSTR);
-						data->ATTR[n].Value = ConvertBSTRToMBS(vtProp.bstrVal);
+						data->ATTR[n].Value =  (ConvertBSTRToMBS(vtProp.bstrVal));
 					}
 
 
 				}
 
-				
+
 				apObj[i]->Release();
 			}
 
@@ -345,7 +345,7 @@ HRESULT SysInfo::WMIData(WMIInfo *data) {
 
 }
 
-// Ïîëó÷åíèå èíôîðìàöèè èç WMI íåñêîëüêî ýêçåìïëÿðîâ
+// Получение информации из WMI несколько экземпляров
 HRESULT SysInfo::WMIData(WMIInfoMany *data) {
 	HRESULT hr;
 	IEnumWbemClassObject * pEnumerator = NULL;
@@ -364,18 +364,18 @@ HRESULT SysInfo::WMIData(WMIInfoMany *data) {
 		hr = pEnumerator->Next(WBEM_INFINITE, 10, apObj, &uReturned);
 
 		if (SUCCEEDED(hr)) {
-			// Ïåðåáèðàåì îáüåêòû
+			// Перебираем обьекты
 			for (ULONG i = 0; i < uReturned; i++) {
 
 
-				// Ïåðåáèðàåì ñâîéñòâà
+				// Перебираем свойства
 				for (ULONG n = 0; (n < MAX_PROPERTY) & (data->ATTR[i][n].Name != ""); n++) {
 					VARIANT vtProp;
 					HRESULT hro;
 					_bstr_t prName = ConvertMBSToBSTR(data->ATTR[i][n].Property);
 					hro = apObj[i]->Get(prName, 0, &vtProp, 0, 0);
 					if (!FAILED(hro)) {
-						// Ïðåîáðàçóåì îòâåò â ñòðîêó
+						// Преобразуем ответ в строку
 						hr = VariantChangeType(&vtProp, &vtProp, 0, VT_BSTR);
 						data->ATTR[i][n].Value = ConvertBSTRToMBS(vtProp.bstrVal);
 					}
@@ -392,7 +392,7 @@ HRESULT SysInfo::WMIData(WMIInfoMany *data) {
 }
 
 
-// Ïîëó÷åíèå èíôîðìàöèè èç WMI ìíîæåñòâà ýêçåìïëÿðîâ
+// Получение информации из WMI множества экземпляров
 HRESULT SysInfo::WMIData(std::vector <WMIInfo> *data, WMIInfo *st) {
 	HRESULT hr;
 	int count = 0;
@@ -413,30 +413,30 @@ HRESULT SysInfo::WMIData(std::vector <WMIInfo> *data, WMIInfo *st) {
 		hr = pEnumerator->Next(WBEM_INFINITE, 10, apObj, &uReturned);
 
 		if (SUCCEEDED(hr)) {
-			// Ïåðåáèðàåì îáüåêòû
+			// Перебираем объекты
 			for (ULONG i = 0; i < uReturned; i++) {
 
 				data->push_back(res);
 
 
-				// Ïåðåáèðàåì ñâîéñòâà
+				// перебираем свойства
 				for (ULONG n = 0; (n < MAX_PROPERTY) & (st->ATTR[n].Property != ""); n++) {
 					VARIANT vtProp;
 					HRESULT hro;
 					_bstr_t prName = ConvertMBSToBSTR(st->ATTR[n].Property);
-					
-					
+
+
 					hro = apObj[i]->Get(prName, 0, &vtProp, 0, 0);
 					if (!FAILED(hro)) {
-						// Ïðåîáðàçóåì îòâåò â ñòðîêó
+						// Преобразуем ответ в строку
 						hr = VariantChangeType(&vtProp, &vtProp, 0, VT_BSTR);
-						
-						
-					
+
+
+
 						data->at(count).ATTR[n].Name = st->ATTR[n].Name;
 						data->at(count).ATTR[n].Property = st->ATTR[n].Property;
 						data->at(count).ATTR[n].Value = ConvertBSTRToMBS(vtProp.bstrVal);
-						
+
 					}
 				}
 				apObj[i]->Release();
@@ -451,13 +451,13 @@ HRESULT SysInfo::WMIData(std::vector <WMIInfo> *data, WMIInfo *st) {
 }
 
 
-/*===================== Îòîáðàæåíèå èíôîðìàöèè =====================*/
+/*===================== Отображение информации =====================*/
 HRESULT SysInfo::ShowWMIdata(WMIInfo *data) {
 	cout << endl;
-	cout << "=======    " << data->Description << "   =======" << endl;
+	cout << "=======    " << utf8_to_cp1251(data->Description.c_str()) << "   =======" << endl;
 
 	for (ULONG n = 0; (n < MAX_PROPERTY) & (data->ATTR[n].Name != ""); n++) {
-		cout << data->ATTR[n].Name << ": " << data->ATTR[n].Value << ";" << endl;
+		cout << utf8_to_cp1251( data->ATTR[n].Name.c_str()) << ": " << data->ATTR[n].Value << ";" << endl;
 	}
 
 	return S_OK;
@@ -466,13 +466,13 @@ HRESULT SysInfo::ShowWMIdata(WMIInfo *data) {
 
 HRESULT SysInfo::ShowWMIdata(WMIInfoMany *data) {
 	cout << endl;
-	cout << "=======    " << data->Description << "   =======" << endl;
+	cout << "=======    " << utf8_to_cp1251(data->Description.c_str()) << "   =======" << endl;
 	for (int i = 0; (i < MAX_INSTANCE) & (data->ATTR[i][0].Value != ""); i++) {
-		
-		cout << data->DescriptionIterator << " "<< i << endl;
-		
+
+		cout << utf8_to_cp1251(data->DescriptionIterator.c_str()) << " " << i << endl;
+
 		for (int n = 0; (n < MAX_PROPERTY) & (data->ATTR[i][n].Name != ""); n++) {
-			cout << data->ATTR[i][n].Name << ": " << data->ATTR[i][n].Value << ";" << endl;
+			cout << utf8_to_cp1251( data->ATTR[i][n].Name.c_str()) << ": " << data->ATTR[i][n].Value << ";" << endl;
 		}
 
 	}
@@ -482,7 +482,7 @@ HRESULT SysInfo::ShowWMIdata(WMIInfoMany *data) {
 
 HRESULT SysInfo::ShowWMIdata(std::vector <WMIInfo> *data, WMIInfo *st) {
 	cout << endl;
-	cout << "=======    " << st->Description << "   =======" << endl;
+	cout << "=======    " << utf8_to_cp1251(st->Description.c_str()) << "   =======" << endl;
 
 
 	for (WMIInfo inf : *data) {
@@ -493,13 +493,13 @@ HRESULT SysInfo::ShowWMIdata(std::vector <WMIInfo> *data, WMIInfo *st) {
 			str += inf.ATTR[n].Value;
 			str += "\t";
 		}
-		str.erase(str.length()-1,1);
+		str.erase(str.length() - 1, 1);
 
 		str += ";";
 
-		cout << str << endl ;
+		cout << utf8_to_cp1251(str.c_str()) << endl;
 	}
-		
+
 
 
 
@@ -517,7 +517,7 @@ HRESULT  SysInfo::UpTime(WMIInfo *upt) {
 
 	int64_t day = uptime / day_t;
 	uptime = uptime % day_t;
-	
+
 	int64_t hours = uptime / hours_t;
 	uptime = uptime % hours_t;
 
@@ -552,28 +552,5 @@ HRESULT  SysInfo::UpTime(WMIInfo *upt) {
 
 
 /*
-HRESULT  SysInfo::ShowUpTime(LONGLONG *uptime, WMIInfo *upt) {
-
-	const long day_t = 1000 * 60 * 60 * 24;
-	const long hours_t = 1000 * 60 * 60;
-	const long min_t = 1000 * 60;
-	const long second_t = 1000;
-
-	long day = *uptime / day_t;
-	*uptime = *uptime % day_t;
-
-	long hours = *uptime / hours_t;
-	*uptime = *uptime % hours_t;
-
-	long min = *uptime / min_t;
-	*uptime = *uptime % min_t;
-
-	long second = *uptime / second_t;
-	*uptime = *uptime % second_t;
-
-
-
 	cout << "UpTime: " << day << "d " << hours << "h " << min << "m " << second << "s;"  << endl  ;
-	return S_OK;
-}
 */
