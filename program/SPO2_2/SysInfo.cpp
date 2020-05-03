@@ -1,6 +1,6 @@
 #include "SysInfo.h"
 
-// Конструктор
+// ГЉГ®Г­Г±ГІГ°ГіГЄГІГ®Г°
 SysInfo::SysInfo(){
 	sql::PreparedStatement *prep_stmt;
 	sql::Statement *stmt;
@@ -10,11 +10,11 @@ SysInfo::SysInfo(){
 
 	driver = get_driver_instance();
 
-	// Устанавливаем соединение с базой
+	// Г“Г±ГІГ Г­Г ГўГ«ГЁГўГ ГҐГ¬ Г±Г®ГҐГ¤ГЁГ­ГҐГ­ГЁГҐ Г± ГЎГ Г§Г®Г©
 	con = driver->connect(DB_HOST, DB_LOGIN, DB_PASSWORD);
-	// Выбиаем рабочую БД 
+	// Г‚Г»ГЎГЁГ ГҐГ¬ Г°Г ГЎГ®Г·ГіГѕ ГЃГ„ 
 	con->setSchema(DB_BD);
-	// Получим id текущего сеанса   
+	// ГЏГ®Г«ГіГ·ГЁГ¬ id ГІГҐГЄГіГ№ГҐГЈГ® Г±ГҐГ Г­Г±Г    
 	prep_stmt = con->prepareStatement("INSERT INTO Manager(time) VALUES (?)");
 	prep_stmt->setInt64(1, (long)t);
 	prep_stmt->execute();
@@ -28,7 +28,7 @@ SysInfo::SysInfo(){
 		id = res->getInt(1);
 	}
 	else {
-		cout << "Не получен ID!";
+		cout << "ГЌГҐ ГЇГ®Г«ГіГ·ГҐГ­ ID!";
 	}
 	delete stmt;
 
@@ -72,23 +72,40 @@ SysInfo::SysInfo(){
 	ShowWMIdata(&Pointer);
 	PushMysql(&Pointer);
 
+
 	//Monitor
 	ManyWMIInfo(&DesktopMonitor, &DesktopMonitor_I);
 	WMIData(&DesktopMonitor);
 	ShowWMIdata(&DesktopMonitor);
 	PushMysql(&DesktopMonitor);
+
+	// Uptime
+	UpTime(&UPTIME);
+	ShowWMIdata(&UPTIME);
+	PushMysql(&UPTIME);
+
+
+
 	
 
 	WMIData(&Process, &Process_info);
 	ShowWMIdata(&Process, &Process_info);
+	PushMysql(&Process, &Process_info);
+
+
+
+
+
+
+
 }
 
-// Деструктор
+// Г„ГҐГ±ГІГ°ГіГЄГІГ®Г°
 SysInfo::~SysInfo() {
 	delete con;
 }
 
-// Заполнение структуры WMIInfoMany из WMIInfo
+// Г‡Г ГЇГ®Г«Г­ГҐГ­ГЁГҐ Г±ГІГ°ГіГЄГІГіГ°Г» WMIInfoMany ГЁГ§ WMIInfo
 HRESULT SysInfo::ManyWMIInfo(WMIInfoMany *many, WMIInfo *one) {
 	many->Description = one->Description;
 	many->WMIClass = one->WMIClass;
@@ -117,7 +134,7 @@ HRESULT SysInfo::PushMysqlTest() {
 
 	return S_OK;
 }
-/*===================== Отправка в БД =====================*/
+/*===================== ГЋГІГЇГ°Г ГўГЄГ  Гў ГЃГ„ =====================*/
 HRESULT SysInfo::PushMysql(WMIInfo *data) {
 
 	try {
@@ -130,7 +147,7 @@ HRESULT SysInfo::PushMysql(WMIInfo *data) {
 		for (int i = 0; (i < MAX_PROPERTY) & (data->ATTR[i].Name != ""); i++) {
 			sql += data->ATTR[i].Property + ",";
 		}
-		// Удалим лишнюю запятую
+		// Г“Г¤Г Г«ГЁГ¬ Г«ГЁГёГ­ГѕГѕ Г§Г ГЇГїГІГіГѕ
 		if (sql.size() > 0)  sql.resize(sql.size() - 1);
 
 		sql += ") VALUES(?,";
@@ -138,7 +155,7 @@ HRESULT SysInfo::PushMysql(WMIInfo *data) {
 		for (int i = 0; (i < MAX_PROPERTY) & (data->ATTR[i].Name != ""); i++) {
 			sql += "?,";
 		}
-		// Удалим лишнюю запятую
+		// Г“Г¤Г Г«ГЁГ¬ Г«ГЁГёГ­ГѕГѕ Г§Г ГЇГїГІГіГѕ
 		if (sql.size() > 0)  sql.resize(sql.size() - 1);
 
 		sql += ")";
@@ -159,8 +176,7 @@ HRESULT SysInfo::PushMysql(WMIInfo *data) {
 		cout << "# ERR: SQLException in " << __FILE__;
 		cout << "(" << __FUNCTION__ << ") on line " << __LINE__ << endl;
 		cout << "# ERR: " << e.what();
-		cout << " (MySQL error code: " << e.getErrorCode();
-		cout << ", SQLState: " << e.getSQLState() << " )" << endl;
+		cout << " (MySQL error code: " << e.getErrorCode() << " )" << endl;
 	}
 
 	return S_OK;
@@ -182,7 +198,7 @@ HRESULT SysInfo::PushMysql(WMIInfoMany *data) {
 			for (int n = 0; (n < MAX_PROPERTY) & (data->ATTR[i][n].Name != ""); n++) {
 				sql += data->ATTR[i][n].Property + ",";
 			}
-			// Удалим лишнюю запятую
+			// Г“Г¤Г Г«ГЁГ¬ Г«ГЁГёГ­ГѕГѕ Г§Г ГЇГїГІГіГѕ
 			if (sql.size() > 0)  sql.resize(sql.size() - 1);
 
 			sql += ") VALUES(?,";
@@ -190,7 +206,7 @@ HRESULT SysInfo::PushMysql(WMIInfoMany *data) {
 			for (int n = 0; (n < MAX_PROPERTY) & (data->ATTR[i][n].Name != ""); n++) {
 				sql += "?,";
 			}
-			// Удалим лишнюю запятую
+			// Г“Г¤Г Г«ГЁГ¬ Г«ГЁГёГ­ГѕГѕ Г§Г ГЇГїГІГіГѕ
 			if (sql.size() > 0)  sql.resize(sql.size() - 1);
 
 			sql += ")";
@@ -215,16 +231,73 @@ HRESULT SysInfo::PushMysql(WMIInfoMany *data) {
 		cout << "# ERR: SQLException in " << __FILE__;
 		cout << "(" << __FUNCTION__ << ") on line " << __LINE__ << endl;
 		cout << "# ERR: " << e.what();
-		cout << " (MySQL error code: " << e.getErrorCode();
-		cout << ", SQLState: " << e.getSQLState() << " )" << endl;
+		cout << " (MySQL error code: " << e.getErrorCode() << " )" << endl;
 	}
 
 	return S_OK;
 
 }
-/*===================== Получение информации =====================*/
 
-// Получение информации из WMI один экземпляр
+HRESULT SysInfo::PushMysql(std::vector <WMIInfo> *data, WMIInfo * st) {
+	
+	try {
+		
+		
+		
+			sql::PreparedStatement *prep_stmt;
+			std::string sql;
+			sql = "INSERT INTO " + st->Table + "(";
+			sql += "id,";
+			for (int i = 0; (i < MAX_PROPERTY) & (st->ATTR[i].Name != ""); i++) {
+				sql += st->ATTR[i].Property + ",";
+			}
+			// Г“Г¤Г Г«ГЁГ¬ Г«ГЁГёГ­ГѕГѕ Г§Г ГЇГїГІГіГѕ
+			if (sql.size() > 0)  sql.resize(sql.size() - 1);
+
+			sql += ") VALUES(?,";
+
+			for (int i = 0; (i < MAX_PROPERTY) & (st->ATTR[i].Name != ""); i++) {
+				sql += "?,";
+			}
+			// Г“Г¤Г Г«ГЁГ¬ Г«ГЁГёГ­ГѕГѕ Г§Г ГЇГїГІГіГѕ
+			if (sql.size() > 0)  sql.resize(sql.size() - 1);
+
+			sql += ")";
+
+			for (WMIInfo inf : *data) {
+				prep_stmt = con->prepareStatement(sql::SQLString(sql.c_str()));
+				prep_stmt->setInt64(1, id);
+				for (int i = 0; (i < MAX_PROPERTY) & (inf.ATTR[i].Name != ""); i++) {
+					prep_stmt->setString(i + 2, sql::SQLString(inf.ATTR[i].Value.c_str()));
+				}
+
+				prep_stmt->execute();
+				cout << "*";
+			}
+
+
+
+
+
+	}
+	catch (sql::SQLException &e) {
+		cout << "# ERR: SQLException in " << __FILE__;
+		cout << "(" << __FUNCTION__ << ") on line " << __LINE__ << endl;
+		cout << "# ERR: " << e.what();
+		cout << " (MySQL error code: " << e.getErrorCode() << " )" << endl;
+	}
+
+	return S_OK;
+	
+	
+	
+	
+
+}
+
+/*===================== ГЏГ®Г«ГіГ·ГҐГ­ГЁГҐ ГЁГ­ГґГ®Г°Г¬Г Г¶ГЁГЁ =====================*/
+
+// ГЏГ®Г«ГіГ·ГҐГ­ГЁГҐ ГЁГ­ГґГ®Г°Г¬Г Г¶ГЁГЁ ГЁГ§ WMI Г®Г¤ГЁГ­ ГЅГЄГ§ГҐГ¬ГЇГ«ГїГ°
 HRESULT SysInfo::WMIData(WMIInfo *data) {
 	HRESULT hr;
 	IEnumWbemClassObject * pEnumerator = NULL;
@@ -242,18 +315,18 @@ HRESULT SysInfo::WMIData(WMIInfo *data) {
 		hr = pEnumerator->Next(WBEM_INFINITE, 10, apObj, &uReturned);
 
 		if (SUCCEEDED(hr)){
-			// Перебираем обьекты
+			// ГЏГҐГ°ГҐГЎГЁГ°Г ГҐГ¬ Г®ГЎГјГҐГЄГІГ»
 			for (ULONG i = 0; i < uReturned; i++){
 				
 				
-				// Перебираем свойства
+				// ГЏГҐГ°ГҐГЎГЁГ°Г ГҐГ¬ Г±ГўГ®Г©Г±ГІГўГ 
 				for (ULONG n = 0; (n < MAX_PROPERTY) & (data->ATTR[n].Name != ""); n++) {
 					VARIANT vtProp;
 					HRESULT hro;
 					_bstr_t prName = ConvertMBSToBSTR(data->ATTR[n].Property);
 					hro = apObj[i]->Get(prName, 0, &vtProp, 0, 0);
 					if (!FAILED(hro)) {
-						// Преобразуем ответ в строку
+						// ГЏГ°ГҐГ®ГЎГ°Г Г§ГіГҐГ¬ Г®ГІГўГҐГІ Гў Г±ГІГ°Г®ГЄГі
 						hr = VariantChangeType(&vtProp, &vtProp, 0, VT_BSTR);
 						data->ATTR[n].Value = ConvertBSTRToMBS(vtProp.bstrVal);
 					}
@@ -272,7 +345,7 @@ HRESULT SysInfo::WMIData(WMIInfo *data) {
 
 }
 
-// Получение информации из WMI несколько экземпляров
+// ГЏГ®Г«ГіГ·ГҐГ­ГЁГҐ ГЁГ­ГґГ®Г°Г¬Г Г¶ГЁГЁ ГЁГ§ WMI Г­ГҐГ±ГЄГ®Г«ГјГЄГ® ГЅГЄГ§ГҐГ¬ГЇГ«ГїГ°Г®Гў
 HRESULT SysInfo::WMIData(WMIInfoMany *data) {
 	HRESULT hr;
 	IEnumWbemClassObject * pEnumerator = NULL;
@@ -291,18 +364,18 @@ HRESULT SysInfo::WMIData(WMIInfoMany *data) {
 		hr = pEnumerator->Next(WBEM_INFINITE, 10, apObj, &uReturned);
 
 		if (SUCCEEDED(hr)) {
-			// Перебираем обьекты
+			// ГЏГҐГ°ГҐГЎГЁГ°Г ГҐГ¬ Г®ГЎГјГҐГЄГІГ»
 			for (ULONG i = 0; i < uReturned; i++) {
 
 
-				// Перебираем свойства
+				// ГЏГҐГ°ГҐГЎГЁГ°Г ГҐГ¬ Г±ГўГ®Г©Г±ГІГўГ 
 				for (ULONG n = 0; (n < MAX_PROPERTY) & (data->ATTR[i][n].Name != ""); n++) {
 					VARIANT vtProp;
 					HRESULT hro;
 					_bstr_t prName = ConvertMBSToBSTR(data->ATTR[i][n].Property);
 					hro = apObj[i]->Get(prName, 0, &vtProp, 0, 0);
 					if (!FAILED(hro)) {
-						// Преобразуем ответ в строку
+						// ГЏГ°ГҐГ®ГЎГ°Г Г§ГіГҐГ¬ Г®ГІГўГҐГІ Гў Г±ГІГ°Г®ГЄГі
 						hr = VariantChangeType(&vtProp, &vtProp, 0, VT_BSTR);
 						data->ATTR[i][n].Value = ConvertBSTRToMBS(vtProp.bstrVal);
 					}
@@ -319,7 +392,7 @@ HRESULT SysInfo::WMIData(WMIInfoMany *data) {
 }
 
 
-// Получение информации из WMI множества экземпляров
+// ГЏГ®Г«ГіГ·ГҐГ­ГЁГҐ ГЁГ­ГґГ®Г°Г¬Г Г¶ГЁГЁ ГЁГ§ WMI Г¬Г­Г®Г¦ГҐГ±ГІГўГ  ГЅГЄГ§ГҐГ¬ГЇГ«ГїГ°Г®Гў
 HRESULT SysInfo::WMIData(std::vector <WMIInfo> *data, WMIInfo *st) {
 	HRESULT hr;
 	int count = 0;
@@ -340,13 +413,13 @@ HRESULT SysInfo::WMIData(std::vector <WMIInfo> *data, WMIInfo *st) {
 		hr = pEnumerator->Next(WBEM_INFINITE, 10, apObj, &uReturned);
 
 		if (SUCCEEDED(hr)) {
-			// Перебираем обьекты
+			// ГЏГҐГ°ГҐГЎГЁГ°Г ГҐГ¬ Г®ГЎГјГҐГЄГІГ»
 			for (ULONG i = 0; i < uReturned; i++) {
 
 				data->push_back(res);
 
 
-				// Перебираем свойства
+				// ГЏГҐГ°ГҐГЎГЁГ°Г ГҐГ¬ Г±ГўГ®Г©Г±ГІГўГ 
 				for (ULONG n = 0; (n < MAX_PROPERTY) & (st->ATTR[n].Property != ""); n++) {
 					VARIANT vtProp;
 					HRESULT hro;
@@ -355,7 +428,7 @@ HRESULT SysInfo::WMIData(std::vector <WMIInfo> *data, WMIInfo *st) {
 					
 					hro = apObj[i]->Get(prName, 0, &vtProp, 0, 0);
 					if (!FAILED(hro)) {
-						// Преобразуем ответ в строку
+						// ГЏГ°ГҐГ®ГЎГ°Г Г§ГіГҐГ¬ Г®ГІГўГҐГІ Гў Г±ГІГ°Г®ГЄГі
 						hr = VariantChangeType(&vtProp, &vtProp, 0, VT_BSTR);
 						
 						
@@ -378,13 +451,13 @@ HRESULT SysInfo::WMIData(std::vector <WMIInfo> *data, WMIInfo *st) {
 }
 
 
-/*===================== Отображение информации =====================*/
+/*===================== ГЋГІГ®ГЎГ°Г Г¦ГҐГ­ГЁГҐ ГЁГ­ГґГ®Г°Г¬Г Г¶ГЁГЁ =====================*/
 HRESULT SysInfo::ShowWMIdata(WMIInfo *data) {
 	cout << endl;
 	cout << "=======    " << data->Description << "   =======" << endl;
 
 	for (ULONG n = 0; (n < MAX_PROPERTY) & (data->ATTR[n].Name != ""); n++) {
-		cout << data->ATTR[n].Name << " : " << data->ATTR[n].Value << ";" << endl;
+		cout << data->ATTR[n].Name << ": " << data->ATTR[n].Value << ";" << endl;
 	}
 
 	return S_OK;
@@ -399,7 +472,7 @@ HRESULT SysInfo::ShowWMIdata(WMIInfoMany *data) {
 		cout << data->DescriptionIterator << " "<< i << endl;
 		
 		for (int n = 0; (n < MAX_PROPERTY) & (data->ATTR[i][n].Name != ""); n++) {
-			cout << data->ATTR[i][n].Name << " : " << data->ATTR[i][n].Value << ";" << endl;
+			cout << data->ATTR[i][n].Name << ": " << data->ATTR[i][n].Value << ";" << endl;
 		}
 
 	}
@@ -411,15 +484,20 @@ HRESULT SysInfo::ShowWMIdata(std::vector <WMIInfo> *data, WMIInfo *st) {
 	cout << endl;
 	cout << "=======    " << st->Description << "   =======" << endl;
 
-	int count = data->size();
 
 	for (WMIInfo inf : *data) {
 		inf.ATTR;
+		std::string str = "";
 
 		for (int n = 0; (n < MAX_PROPERTY) & (inf.ATTR[n].Name != ""); n++) {
-			cout  << inf.ATTR[n].Value << ";" ;
+			str += inf.ATTR[n].Value;
+			str += "\t";
 		}
-		cout << endl;
+		str.erase(str.length()-1,1);
+
+		str += ";";
+
+		cout << str << endl ;
 	}
 		
 
@@ -428,3 +506,74 @@ HRESULT SysInfo::ShowWMIdata(std::vector <WMIInfo> *data, WMIInfo *st) {
 
 	return S_OK;
 }
+
+HRESULT  SysInfo::UpTime(WMIInfo *upt) {
+	LONGLONG uptime = GetTickCount64();
+
+	const long day_t = 1000 * 60 * 60 * 24;
+	const long hours_t = 1000 * 60 * 60;
+	const long min_t = 1000 * 60;
+	const long second_t = 1000;
+
+	int64_t day = uptime / day_t;
+	uptime = uptime % day_t;
+	
+	int64_t hours = uptime / hours_t;
+	uptime = uptime % hours_t;
+
+	int64_t min = uptime / min_t;
+	uptime = uptime % min_t;
+
+	int64_t second = uptime / second_t;
+	uptime = uptime % second_t;
+
+	for (int i = 0; i < MAX_PROPERTY; i++) {
+		if (upt->ATTR[i].Property == "Day") {
+			upt->ATTR[i].Value = to_string(day);
+			continue;
+		}
+		if (upt->ATTR[i].Property == "Hours") {
+			upt->ATTR[i].Value = to_string(hours);
+			continue;
+		}
+		if (upt->ATTR[i].Property == "Min") {
+			upt->ATTR[i].Value = to_string(min);
+			continue;
+		}
+		if (upt->ATTR[i].Property == "Second") {
+			upt->ATTR[i].Value = to_string(second);
+			continue;
+		}
+	}
+
+
+	return S_OK;
+}
+
+
+/*
+HRESULT  SysInfo::ShowUpTime(LONGLONG *uptime, WMIInfo *upt) {
+
+	const long day_t = 1000 * 60 * 60 * 24;
+	const long hours_t = 1000 * 60 * 60;
+	const long min_t = 1000 * 60;
+	const long second_t = 1000;
+
+	long day = *uptime / day_t;
+	*uptime = *uptime % day_t;
+
+	long hours = *uptime / hours_t;
+	*uptime = *uptime % hours_t;
+
+	long min = *uptime / min_t;
+	*uptime = *uptime % min_t;
+
+	long second = *uptime / second_t;
+	*uptime = *uptime % second_t;
+
+
+
+	cout << "UpTime: " << day << "d " << hours << "h " << min << "m " << second << "s;"  << endl  ;
+	return S_OK;
+}
+*/

@@ -10,6 +10,8 @@ using namespace std;
 #include <algorithm>
 #include <vector>
 
+#include "windows.h"
+
 #include "ControlWMI.h"
 #include "ConvertStr.h"
 
@@ -262,14 +264,43 @@ WMIInfoMany KEYBOARD = { "Клавиатура №" };
 		//WMI CLASS
 			"Win32_Process",
 			"Process_INFO",
-			"Process",
+			"PROCESS",
 			{
 		// Начало инициализации внутренней структуры info	
-			{"Name", "Имя", ""},
-			{"Handle", "Id", ""}
+			{"Handle", "Id", ""},
+			{"Name", "Имя", ""}
+			
 			// Конец инициализации внутренней структyры info	
 			} };
 
+	// Время загрузки ОС
+	WMIInfo START = {
+		//WMI CLASS
+			"Win32_OperatingSystem",
+			"Start ОС",
+			"Start",
+			{
+		// Начало инициализации внутренней структуры info	
+			{"LastBootUpTime", "Время последней загрузки", ""},
+			{"LocalDateTime", "Время последней загрузки", ""}
+			// Конец инициализации внутренней структyры info	
+			} };
+
+	LONGLONG Uptime;
+	WMIInfo UPTIME = {
+		//WMI CLASS
+			"",
+			"Время работы ОС",
+			"UPTIME",
+			{
+		// Начало инициализации внутренней структуры info	
+			{"Day", "Дней", ""},
+			{"Hours", "Часов", ""},
+			{"Min", "Минут", ""},
+			{"Second", "Секунд", ""},
+			// Конец инициализации внутренней структyры info	
+			} };
+		
 	//MySQL 
 	sql::Driver *driver;
 	sql::Connection *con;
@@ -283,7 +314,6 @@ WMIInfoMany KEYBOARD = { "Клавиатура №" };
 
 
 	HRESULT ManyWMIInfo(WMIInfoMany *many, WMIInfo *one);
-
 
 public:
 	SysInfo();
@@ -305,10 +335,11 @@ public:
 	// Отправить данные в MySQL
 	HRESULT PushMysql(WMIInfo *data);
 	HRESULT PushMysql(WMIInfoMany *data);
+	HRESULT PushMysql(std::vector <WMIInfo> *data, WMIInfo * st);
 
-
-
-
+	// Возвращает время работы системы
+	HRESULT UpTime(WMIInfo *upt);
+	HRESULT ShowUpTime(LONGLONG *uptime, WMIInfo *upt);
 
 };
 
