@@ -254,6 +254,26 @@ private:
 
 	WMIInfoMany DesktopMonitor = { "Монитор №" };
 
+	// Информация о сетевых адаптерах
+	WMIInfo NetworkAdapter_I = {
+		//WMI CLASS
+			"Win32_NetworkAdapter",
+			"NetworkAdapter_INFO",
+			"NetworkAdapter",
+			{
+			// Начало инициализации внутренней структуры info
+				{"Caption", "Наименование устройства: ", ""},
+				{"Description", "Описание: ", ""},
+				{"DeviceID", "Идентификатор устройства: ", ""},
+				{"Manufacturer", "Производитель: ", ""},
+				{"MaxSpeed", "Максимальная скорость: ", ""},
+				{"NetworkAddresses[]", "IP-адрес: ", ""},
+				{"Status", "Статус устройства: ", ""}
+				// Конец инициализации внутренней структyры info	
+			} };
+
+	WMIInfoMany NetworkAdapter = { "Адаптер №" };
+
 
 // Информация о запущеных процессах
 	std::vector <WMIInfo> Process;
