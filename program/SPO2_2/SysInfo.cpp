@@ -9,12 +9,12 @@ SysInfo::SysInfo() {
 	std::time_t t = std::time(0);
 
 	driver = get_driver_instance();
-
 	// Устанавливаем соединение с базой
 	con = driver->connect(DB_HOST, DB_LOGIN, DB_PASSWORD);
+
 	// Выбиаем рабочую БД
 	con->setSchema(DB_BD);
-	// Получим id текущего сеанса  
+	// Получим id текущего сеанса 
 	prep_stmt = con->prepareStatement("INSERT INTO Manager(time) VALUES (?)");
 	prep_stmt->setInt64(1, (long)t);
 	prep_stmt->execute();
