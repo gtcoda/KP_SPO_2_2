@@ -60,16 +60,17 @@ struct WMIInfoMany {
 	info ATTR[MAX_INSTANCE][MAX_PROPERTY];
 };
 
-// Структура набора свойств нескольких классов отдающего один экземпляр
 
+// Структура набора свойств нескольких классов отдающего один экземпляр
 struct WMIInfoManyClass {
 	WMIInfo Info[MAX_CLASS]; //Структуры для каждого класса
 };
 
 
-
-
-
+// Структура набора свойств нескольких классов отдающего несколько экземпляров
+struct WMIInfoManyClassManyObject {
+	WMIInfoMany Inf[MAX_CLASS]; //Структуры для каждого класса
+};
 
 class SysInfo 
 {
@@ -78,6 +79,67 @@ private:
 	ControlWMI objWMI;
 
 	// Экземляры информационной структуры
+
+
+
+
+
+// Сетевые адаптеры
+	// Информация о сетевых адаптерах
+	WMIInfo NetworkAdapter_I = {
+		//WMI CLASS
+			"Win32_NetworkAdapter",
+			"NetworkAdapter_INFO",
+			"NetworkAdapter",
+			{
+		// Начало инициализации внутренней структуры info
+			{"Caption", "Наименование устройства: ", ""},
+			{"Description", "Описание: ", ""},
+			{"DeviceID", "Идентификатор устройства: ", ""},
+			{"Manufacturer", "Производитель: ", ""},
+			{"MaxSpeed", "Максимальная скорость: ", ""},
+			{"NetworkAddresses[]", "IP-адрес: ", ""},
+			{"Status", "Статус устройства: ", ""}
+			// Конец инициализации внутренней структyры info	
+		} };
+
+	WMIInfoMany NetworkAdapter = { "Адаптер №" };
+
+
+	WMIInfo NetworkAdapterConfiguration_I = {
+		//WMI CLASS
+			"Win32_NetworkAdapterConfiguration",
+			"NetworkAdapterConfiguration_INFO",
+			"NetworkAdapter",
+			{
+		// Начало инициализации внутренней структуры info
+			{"Caption", "Наименование устройства: ", ""},
+			{"DefaultIPCateway", "Шлюз: ", ""},
+			{"DefaultTTL", "TTL: ", ""},
+			{"DHCPServer", "DHCP : ", ""},
+			{"DNSHostName", "DNS: ", ""},
+			{"IPAdress", "IP-адрес: ", ""}
+			// Конец инициализации внутренней структyры info	
+		} };
+
+	WMIInfoMany NetworkAdapterConfiguration = { "Адаптер №" };
+
+
+
+	WMIInfoManyClassManyObject Networks = { NetworkAdapter, NetworkAdapterConfiguration };
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // Информация о BIOS	
 	WMIInfo BIOS = {
@@ -254,25 +316,6 @@ private:
 
 	WMIInfoMany DesktopMonitor = { "Монитор №" };
 
-	// Информация о сетевых адаптерах
-	WMIInfo NetworkAdapter_I = {
-		//WMI CLASS
-			"Win32_NetworkAdapter",
-			"NetworkAdapter_INFO",
-			"NetworkAdapter",
-			{
-			// Начало инициализации внутренней структуры info
-				{"Caption", "Наименование устройства: ", ""},
-				{"Description", "Описание: ", ""},
-				{"DeviceID", "Идентификатор устройства: ", ""},
-				{"Manufacturer", "Производитель: ", ""},
-				{"MaxSpeed", "Максимальная скорость: ", ""},
-				{"NetworkAddresses[]", "IP-адрес: ", ""},
-				{"Status", "Статус устройства: ", ""}
-				// Конец инициализации внутренней структyры info	
-			} };
-
-	WMIInfoMany NetworkAdapter = { "Адаптер №" };
 
 
 // Информация о запущеных процессах
@@ -326,11 +369,16 @@ public:
 	HRESULT PushMysqlTest();
 
 
-	// Получение данных из WMI
+	// Go
+	HRESULT Info(WMIInfo *data);
+	HRESULT Info(WMIInfoMany *data, WMIInfo *data_i);
+	HRESULT Info(std::vector <WMIInfo> *data, WMIInfo *st);
 
+	// Получение данных из WMI
 	HRESULT WMIData(WMIInfo *data);
 	HRESULT WMIData(WMIInfoMany *data);
 	HRESULT WMIData(std::vector <WMIInfo> *data, WMIInfo * st);
+	HRESULT WMIData(WMIInfoManyClassManyObject *data);
 
 	// Отобразить данные в stdout
 	HRESULT ShowWMIdata(WMIInfo *data);

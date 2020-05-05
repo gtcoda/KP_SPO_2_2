@@ -32,83 +32,53 @@ SysInfo::SysInfo() {
 	}
 	delete stmt;
 
-
-	// BIOS
-	WMIData(&BIOS);
-	ShowWMIdata(&BIOS);
-	PushMysql(&BIOS);
-
-	// CPU
-	WMIData(&CPU);
-	ShowWMIdata(&CPU);
-	PushMysql(&CPU);
-
-	// DISK
-	ManyWMIInfo(&DISK, &DISK_I);
-	WMIData(&DISK);
-	ShowWMIdata(&DISK);
-	PushMysql(&DISK);
-
-
-	// PARTITION
-	ManyWMIInfo(&PARTITION, &PARTITION_I);
-	WMIData(&PARTITION);
-	ShowWMIdata(&PARTITION);
-	PushMysql(&PARTITION);
-
-	// KEYBOARD
-	ManyWMIInfo(&KEYBOARD, &KEYBOARD_I);
-	WMIData(&KEYBOARD);
-	ShowWMIdata(&KEYBOARD);
-	PushMysql(&KEYBOARD);
-
-	// BaseBoard
-	WMIData(&BaseBoard);
-	ShowWMIdata(&BaseBoard);
-	PushMysql(&BaseBoard);
-
-	// BaseBoard
-	WMIData(&Pointer);
-	ShowWMIdata(&Pointer);
-	PushMysql(&Pointer);
-
-
-	// Monitor
-	ManyWMIInfo(&DesktopMonitor, &DesktopMonitor_I);
-	WMIData(&DesktopMonitor);
-	ShowWMIdata(&DesktopMonitor);
-	PushMysql(&DesktopMonitor);
-
-	// NetworkAdapter
-	ManyWMIInfo(&NetworkAdapter, &NetworkAdapter_I);
-	WMIData(&NetworkAdapter);
-	ShowWMIdata(&NetworkAdapter);
-	PushMysql(&NetworkAdapter);
-
+	Info(&BIOS);
+	Info(&CPU);
+	Info(&DISK, &DISK_I);
+	Info(&PARTITION, &PARTITION_I);
+	Info(&KEYBOARD, &KEYBOARD_I);
+	Info(&BaseBoard);
+	Info(&DesktopMonitor, &DesktopMonitor_I);
+	Info(&NetworkAdapter, &NetworkAdapter_I);
+	
+	
 	// Uptime
 	UpTime(&UPTIME);
 	ShowWMIdata(&UPTIME);
 	PushMysql(&UPTIME);
 
 
-
-
-
-	WMIData(&Process, &Process_info);
-	ShowWMIdata(&Process, &Process_info);
-	PushMysql(&Process, &Process_info);
-
-
-
-
-
-
+	Info(&Process, &Process_info);
 
 }
 
 
 SysInfo::~SysInfo() {
 	delete con;
+}
+
+
+HRESULT SysInfo::Info(WMIInfo *data) {
+	WMIData(data);
+	ShowWMIdata(data);
+	PushMysql(data);
+	return S_OK;
+}
+
+HRESULT SysInfo::Info(WMIInfoMany *data, WMIInfo *data_i) {
+	ManyWMIInfo(data, data_i);
+	WMIData(data);
+	ShowWMIdata(data);
+	PushMysql(data);
+	return S_OK;
+
+}
+
+HRESULT SysInfo::Info(std::vector <WMIInfo> *data, WMIInfo *st) {
+	WMIData(data, st);
+	ShowWMIdata(data, st);
+	PushMysql(data, st);
+	return S_OK;
 }
 
 // Заполнение структуры WMIInfoMany из WMIInfo
@@ -456,13 +426,22 @@ HRESULT SysInfo::WMIData(std::vector <WMIInfo> *data, WMIInfo *st) {
 
 }
 
-
+// Получение информации из WMI несколько экземпляров
+HRESULT SysInfo::WMIData(WMIInfoManyClassManyObject *data) {
+	for (WMIInfoMany iter : data->Inf)
+	{
+		int m = 0;
+		m++;
+	}
+	return S_OK;
+}
 /*===================== Отображение информации =====================*/
 HRESULT SysInfo::ShowWMIdata(WMIInfo *data) {
 	cout << endl;
 	cout << "=======    " << utf8_to_cp1251(data->Description.c_str()) << "   =======" << endl;
 
 	for (ULONG n = 0; (n < MAX_PROPERTY) & (data->ATTR[n].Name != ""); n++) {
+		if (data->ATTR[n].Value == "") { continue; }
 		cout << utf8_to_cp1251( data->ATTR[n].Name.c_str()) << ": " << data->ATTR[n].Value << ";" << endl;
 	}
 
@@ -478,8 +457,10 @@ HRESULT SysInfo::ShowWMIdata(WMIInfoMany *data) {
 		cout << utf8_to_cp1251(data->DescriptionIterator.c_str()) << " " << i << endl;
 
 		for (int n = 0; (n < MAX_PROPERTY) & (data->ATTR[i][n].Name != ""); n++) {
+			if (data->ATTR[i][n].Value == "") { continue; }
 			cout << utf8_to_cp1251( data->ATTR[i][n].Name.c_str()) << ": " << data->ATTR[i][n].Value << ";" << endl;
 		}
+		cout << endl;
 
 	}
 	return S_OK;
