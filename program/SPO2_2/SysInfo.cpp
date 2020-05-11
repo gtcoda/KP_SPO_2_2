@@ -8,36 +8,6 @@ SysInfo::SysInfo() {
 	id = base.GetID();
 	base.GetConnector(&con);
 
-	
-	
-	/*
-	Info(&CPU);
-	Info(&DISK, &DISK_I);
-	Info(&PARTITION, &PARTITION_I);
-	Info(&KEYBOARD, &KEYBOARD_I);
-	Info(&BaseBoard);
-	Info(&DesktopMonitor, &DesktopMonitor_I);
-
-
-	ManyWMIInfo(&NetworkAdapter, &NetworkAdapter_I);
-	ManyWMIInfo(&NetworkAdapterConfiguration, &NetworkAdapterConfiguration_I);
-
-	WMIInfoManyClassManyObject Networks = { NetworkAdapter, NetworkAdapterConfiguration };
-
-	WMIData(&Networks);
-	ShowWMIdata(&Networks);
-	
-	// Uptime
-	UpTime(&UPTIME);
-	ShowWMIdata(&UPTIME);
-	PushMysql(&UPTIME);
-
-
-
-	Info(&Process, &Process_info);
-
-	*/
-
 }
 
 
@@ -85,19 +55,6 @@ HRESULT SysInfo::ManyWMIInfo(WMIInfoMany *many, WMIInfo *one) {
 }
 
 
-
-HRESULT SysInfo::PushMysqlTest() {
-	sql::PreparedStatement *prep_stmt;
-
-	prep_stmt = con->prepareStatement("INSERT INTO test_table(test_char, time) VALUES (?, ?)");
-	prep_stmt->setString(1, "a");
-	prep_stmt->setInt64(2, 132132141);
-	prep_stmt->execute();
-
-	delete prep_stmt;
-
-	return S_OK;
-}
 /*===================== Отправка в БД =====================*/
 HRESULT SysInfo::PushMysql(WMIInfo *data) {
 
@@ -354,7 +311,6 @@ HRESULT SysInfo::WMIData(WMIInfoMany *data) {
 
 }
 
-
 // Получение информации из WMI множества экземпляров
 HRESULT SysInfo::WMIData(std::vector <WMIInfo> *data, WMIInfo *st) {
 	HRESULT hr;
@@ -434,7 +390,6 @@ HRESULT SysInfo::ShowWMIdata(WMIInfo *data) {
 	return S_OK;
 }
 
-
 HRESULT SysInfo::ShowWMIdata(WMIInfoMany *data) {
 	cout << endl;
 	cout << "=======    " << utf8_to_cp1251(data->Description.c_str()) << "   =======" << endl;
@@ -451,7 +406,6 @@ HRESULT SysInfo::ShowWMIdata(WMIInfoMany *data) {
 	}
 	return S_OK;
 }
-
 
 HRESULT SysInfo::ShowWMIdata(std::vector <WMIInfo> *data, WMIInfo *st) {
 	cout << endl;
@@ -479,50 +433,6 @@ HRESULT SysInfo::ShowWMIdata(std::vector <WMIInfo> *data, WMIInfo *st) {
 
 	return S_OK;
 }
-
-HRESULT  SysInfo::UpTime(WMIInfo *upt) {
-	LONGLONG uptime = GetTickCount64();
-
-	const long day_t = 1000 * 60 * 60 * 24;
-	const long hours_t = 1000 * 60 * 60;
-	const long min_t = 1000 * 60;
-	const long second_t = 1000;
-
-	int64_t day = uptime / day_t;
-	uptime = uptime % day_t;
-
-	int64_t hours = uptime / hours_t;
-	uptime = uptime % hours_t;
-
-	int64_t min = uptime / min_t;
-	uptime = uptime % min_t;
-
-	int64_t second = uptime / second_t;
-	uptime = uptime % second_t;
-
-	for (int i = 0; i < MAX_PROPERTY; i++) {
-		if (upt->ATTR[i].Property == "Day") {
-			upt->ATTR[i].Value = to_string(day);
-			continue;
-		}
-		if (upt->ATTR[i].Property == "Hours") {
-			upt->ATTR[i].Value = to_string(hours);
-			continue;
-		}
-		if (upt->ATTR[i].Property == "Min") {
-			upt->ATTR[i].Value = to_string(min);
-			continue;
-		}
-		if (upt->ATTR[i].Property == "Second") {
-			upt->ATTR[i].Value = to_string(second);
-			continue;
-		}
-	}
-
-
-	return S_OK;
-}
-
 
 HRESULT SysInfo::ShowWMIdata(WMIInfoManyClassManyObject *data) {
 
@@ -553,6 +463,3 @@ HRESULT SysInfo::ShowWMIdata(WMIInfoManyClassManyObject *data) {
 	return S_OK;
 }
 
-/*
-	cout << "UpTime: " << day << "d " << hours << "h " << min << "m " << second << "s;"  << endl  ;
-*/

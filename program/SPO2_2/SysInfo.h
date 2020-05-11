@@ -79,36 +79,9 @@ class SysInfo
 {
 private:
 
-	ControlWMI objWMI;
+	ControlWMI& objWMI = ControlWMI::Instance();
 
 	// Экземляры информационной структуры
-
-
-
-
-
-// Сетевые адаптеры
-	// Информация о сетевых адаптерах
-	WMIInfo NetworkAdapter_I = {
-		//WMI CLASS
-			"Win32_NetworkAdapter",
-			"NetworkAdapter_INFO",
-			"NetworkAdapter",
-			{
-		// Начало инициализации внутренней структуры info
-			{"Caption", "Наименование устройства: ", ""},
-			{"Description", "Описание: ", ""},
-			{"DeviceID", "Идентификатор устройства: ", ""},
-			{"Manufacturer", "Производитель: ", ""},
-			{"MaxSpeed", "Максимальная скорость: ", ""},
-			{"NetworkAddresses[]", "IP-адрес: ", ""},
-			{"Status", "Статус устройства: ", ""}
-			// Конец инициализации внутренней структyры info	
-		} };
-
-	WMIInfoMany NetworkAdapter = { "Адаптер №" };
-
-
 	WMIInfo NetworkAdapterConfiguration_I = {
 		//WMI CLASS
 			"Win32_NetworkAdapterConfiguration",
@@ -128,49 +101,6 @@ private:
 	WMIInfoMany NetworkAdapterConfiguration = { "Адаптер №" };
 
 
-	   	 
-
-
-
-
-
-// Информация о partition
-	WMIInfo PARTITION_I = {
-		//WMI CLASS
-			"Win32_LogicalDisk",
-			"PARTITION_INFO",
-			"PART",
-			{
-		// Начало инициализации внутренней структуры info
-			{"Size", "Размер [б]", ""},
-			{"FileSystem", "Файловая система", ""},
-			{"FreeSpace", "Свободный обьем [б]", ""},
-			{"Caption", "Название", ""}
-			// Конец инициализации внутренней структyры info	
-				} };
-
-	WMIInfoMany PARTITION = { "Раздел №" };
-
-
-// Информация о клавиатуре
-	WMIInfo KEYBOARD_I = {
-	//WMI CLASS
-		"Win32_Keyboard",
-		"KEYBOARD_INFO",
-		"KEYBOARD",
-		{
-	// Начало инициализации внутренней структуры info
-		{"Description", "Описание", ""},
-		{"DeviceID", "Идентификатор устройства", ""},
-		{"Caption", "Название", ""},
-		{"NumberOfFunctionKeys", "Кол-во ФК", ""}
-		// Конец инициализации внутренней структyры info	
-			} };
-
-	WMIInfoMany KEYBOARD = { "Клавиатура №" };
-
-
-	
 //Информация о Материнской Плате
 	WMIInfoManyClass BB = { {
 			{// Первый класс на разбор
@@ -205,91 +135,11 @@ private:
 	} };
 
 
-	WMIInfo BaseBoard = {
-		//WMI CLASS
-			"Win32_BaseBoard",
-			"BaseBoard_INFO",
-			"BaseBoard",
-			{
-		// Начало инициализации внутренней структуры info	
-			{"Caption", "Наименование Устройства", ""},
-			{"Description", "Описание", ""},
-			{"Manufacturer", "Производитель", ""},
-			{"Product", "Тип", ""},
-			{"SerialNumber", "Серийный номер", ""},
-			{"Tag", "Идентификатор", ""},
-			{"Version", "Версия", ""}
-			// Конец инициализации внутренней структyры info	
-			} };
 	
-// Информация о мыши
-	WMIInfo Pointer = {
-		//WMI CLASS
-			"Win32_PointingDevice",
-			"Pointer_INFO",
-			"Pointer",
-			{
-		// Начало инициализации внутренней структуры info	
-			{"Caption", "Наименование Устройства", ""},
-			{"Description", "Описание", ""},
-			{"Manufacturer", "Производитель", ""},
-			{"HardwareType", "Тип", ""},
-			{"DeviceID", "Идентификатор", ""},
-			{"DeviceInterface ", "Тип интерфейса", ""},
-			{"NumberOfButtons ", "Количество кнопок", ""}
-			// Конец инициализации внутренней структyры info	
-			} };
-
-
-// Информация о мониторе
-	WMIInfo DesktopMonitor_I = {
-		//WMI CLASS
-			"Win32_DesktopMonitor",
-			"DesktopMonitor_INFO",
-			"DesktopMonitor",
-			{
-			// Начало инициализации внутренней структуры info
-				{"Description", "Описание:", ""},
-				{"DeviceID", "Идентификатор устройства", ""},
-				{"Name", "Название", ""},
-				{"MonitorManufacturer", "Производитель монитора", ""}
-				// Конец инициализации внутренней структyры info	
-			} };
-
-	WMIInfoMany DesktopMonitor = { "Монитор №" };
+	
 
 
 
-// Информация о запущеных процессах
-	std::vector <WMIInfo> Process;
-	// Описание получаемых параметров
-	WMIInfo Process_info = {
-		//WMI CLASS
-			"Win32_Process",
-			"Process_INFO",
-			"PROCESS",
-			{
-		// Начало инициализации внутренней структуры info	
-			{"Handle", "Id", ""},
-			{"Name", "Имя", ""}
-			
-			// Конец инициализации внутренней структyры info	
-			} };
-
-// Информация о uptime
-	WMIInfo UPTIME = {
-		//WMI CLASS
-			"",
-			"Время работы ОС",
-			"UPTIME",
-			{
-		// Начало инициализации внутренней структуры info	
-			{"Day", "Дней", ""},
-			{"Hours", "Часов", ""},
-			{"Min", "Минут", ""},
-			{"Second", "Секунд", ""},
-			// Конец инициализации внутренней структyры info	
-			} };
 		
 	//MySQL 
 	sql::Connection *con;
@@ -301,9 +151,6 @@ public:
 
 	SysInfo();
 	~SysInfo();
-	// Отправка данных в БД MySQL
-	HRESULT PushMysqlTest();
-
 
 	// Go
 	HRESULT Info(WMIInfo *data);
@@ -326,8 +173,7 @@ public:
 	HRESULT PushMysql(WMIInfoMany *data);
 	HRESULT PushMysql(std::vector <WMIInfo> *data, WMIInfo * st);
 
-	// Возвращает время работы системы
-	HRESULT UpTime(WMIInfo *upt);
+
 	
 };
 

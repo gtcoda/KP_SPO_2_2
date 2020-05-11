@@ -1,7 +1,7 @@
 #ifndef DB_H
 #define DB_H
 /*
-Соединение с БД
+РЎРѕРµРґРёРЅРµРЅРёРµ СЃ Р‘Р”
 */
 
 #define _WIN32_DCOM
@@ -37,9 +37,9 @@ public:
 		return theSingleInstance;
 	}
 
-	// Получить соединение
+	// РџРѕР»СѓС‡РёС‚СЊ СЃРѕРµРґРёРЅРµРЅРёРµ
 	HRESULT GetConnector(sql::Connection **conget);
-	// Получить id сессии
+	// РџРѕР»СѓС‡РёС‚СЊ id СЃРµСЃСЃРёРё
 	int GetID(void);
 
 
@@ -48,7 +48,7 @@ private:
 	//MySQL 
 	sql::Driver *driver;
 	sql::Connection *con;
-	// Переменные для подключения
+	// РџРµСЂРµРјРµРЅРЅС‹Рµ РґР»СЏ РїРѕРґРєР»СЋС‡РµРЅРёСЏ
 	sql::SQLString DB_HOST = "tcp://gtcoda.ru:3306";
 	sql::SQLString DB_LOGIN = "oop";
 	sql::SQLString DB_PASSWORD = "3o4GAIQCHvPDPM6E";

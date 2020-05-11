@@ -12,6 +12,14 @@ using namespace std;
 #include "CPU.h"
 #include "BIOS.h"
 #include "DISK.h"
+#include "PARTITION.h"
+#include "KEYBOARD.h"
+#include "POINTER.h"
+#include "NETWORK.h"
+#include "BASEBOARD.h"
+#include "MONITOR.h"
+#include "PROCESS.h"
+#include "UPTIME.h"
 
 
 
@@ -21,6 +29,9 @@ int main(int iArgCnt, char ** argv)
 	//system("chcp 65001 > nul");
 	system("chcp 1251 > nul");
 
+	UPTIME UPTIMEInf;
+	UPTIMEInf.Go();
+
 	CPU CPUInf;
 	CPUInf.Go();
 
@@ -29,6 +40,28 @@ int main(int iArgCnt, char ** argv)
 
 	DISK DISKInf;
 	DISKInf.Go();
+	
+	PARTITION PARTITIONInf;
+	PARTITIONInf.Go();
+
+	KEYBOARD KEYBOARDInf;
+	KEYBOARDInf.Go();
+
+	POINTER POINTERInf;
+	POINTERInf.Go();
+
+	NETWORK NETWORKInf;
+	NETWORKInf.Go();
+
+	BASEBOARD BASEBOARDInf;
+	BASEBOARDInf.Go();
+
+	MONITOR MONITORInf;
+	MONITORInf.Go();
+
+	PROCESS PROCESSInf;
+	PROCESSInf.Go();
+
 
 	system("pause");
 	return 0;

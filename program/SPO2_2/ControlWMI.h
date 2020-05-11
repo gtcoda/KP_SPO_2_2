@@ -25,6 +25,14 @@ private:
 	IWbemLocator *pLoc = NULL;
 
 public:
+
+	static ControlWMI& Instance()
+	{
+		static ControlWMI theSingleInstance;
+		return theSingleInstance;
+	}
+
+
 	ControlWMI();
 	~ControlWMI();
 
