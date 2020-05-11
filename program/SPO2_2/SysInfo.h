@@ -126,7 +126,7 @@ private:
 
 
 
-	WMIInfoManyClassManyObject Networks = { NetworkAdapter, NetworkAdapterConfiguration };
+	
 
 
 
@@ -357,12 +357,14 @@ private:
 	sql::SQLString DB_LOGIN = "oop";
 	sql::SQLString DB_PASSWORD = "3o4GAIQCHvPDPM6E";
 	sql::SQLString DB_BD = "test";
-	int id = 0;
+	
 
 
 	HRESULT ManyWMIInfo(WMIInfoMany *many, WMIInfo *one);
 
 public:
+	int id = 0;
+
 	SysInfo();
 	~SysInfo();
 	// Отправка данных в БД MySQL
@@ -384,6 +386,7 @@ public:
 	HRESULT ShowWMIdata(WMIInfo *data);
 	HRESULT ShowWMIdata(WMIInfoMany *data);
 	HRESULT ShowWMIdata(std::vector <WMIInfo> *data, WMIInfo * st);
+	HRESULT ShowWMIdata(WMIInfoManyClassManyObject *data);
 	// Отправить данные в MySQL
 	HRESULT PushMysql(WMIInfo *data);
 	HRESULT PushMysql(WMIInfoMany *data);

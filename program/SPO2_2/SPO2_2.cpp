@@ -11,6 +11,15 @@ using namespace std;
 #include "SysInfo.h"
 
 
+class InfoNetwork: public SysInfo {
+
+public:
+	HRESULT ShowWMIdata() {
+		id;
+		return S_OK;
+	}
+};
+
 
 
 int main(int iArgCnt, char ** argv)
@@ -22,7 +31,8 @@ int main(int iArgCnt, char ** argv)
 
 	// Экземпляр SysInfo
 	SysInfo info;
-	
+	InfoNetwork infoNetworks;
+	infoNetworks.ShowWMIdata();
 
 
 	system("pause");

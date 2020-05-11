@@ -32,15 +32,24 @@ SysInfo::SysInfo() {
 	}
 	delete stmt;
 
+	
 	Info(&BIOS);
+	/*
 	Info(&CPU);
 	Info(&DISK, &DISK_I);
 	Info(&PARTITION, &PARTITION_I);
 	Info(&KEYBOARD, &KEYBOARD_I);
 	Info(&BaseBoard);
 	Info(&DesktopMonitor, &DesktopMonitor_I);
-	Info(&NetworkAdapter, &NetworkAdapter_I);
-	
+
+
+	ManyWMIInfo(&NetworkAdapter, &NetworkAdapter_I);
+	ManyWMIInfo(&NetworkAdapterConfiguration, &NetworkAdapterConfiguration_I);
+
+	WMIInfoManyClassManyObject Networks = { NetworkAdapter, NetworkAdapterConfiguration };
+
+	WMIData(&Networks);
+	ShowWMIdata(&Networks);
 	
 	// Uptime
 	UpTime(&UPTIME);
@@ -48,7 +57,10 @@ SysInfo::SysInfo() {
 	PushMysql(&UPTIME);
 
 
+
 	Info(&Process, &Process_info);
+
+	*/
 
 }
 
@@ -158,7 +170,6 @@ HRESULT SysInfo::PushMysql(WMIInfo *data) {
 	return S_OK;
 
 }
-
 
 HRESULT SysInfo::PushMysql(WMIInfoMany *data) {
 
@@ -428,10 +439,9 @@ HRESULT SysInfo::WMIData(std::vector <WMIInfo> *data, WMIInfo *st) {
 
 // Получение информации из WMI несколько экземпляров
 HRESULT SysInfo::WMIData(WMIInfoManyClassManyObject *data) {
-	for (WMIInfoMany iter : data->Inf)
+	for (int i = 0; i< MAX_CLASS; i++)
 	{
-		int m = 0;
-		m++;
+		WMIData(&data->Inf[i]);
 	}
 	return S_OK;
 }
@@ -537,6 +547,35 @@ HRESULT  SysInfo::UpTime(WMIInfo *upt) {
 	return S_OK;
 }
 
+
+HRESULT SysInfo::ShowWMIdata(WMIInfoManyClassManyObject *data) {
+
+	info ATTR[25];
+
+
+
+
+	
+		// Прохожим по всем экземпляром
+		for (int i = 0; i < MAX_INSTANCE; i++) {
+		
+			// Пройдем по экземпляру каждого класса
+			for (int n = 0; n < MAX_CLASS; n++ ) {
+			
+				for (int m = 0; m < 25; m++) {
+					ATTR[m].Name = data->Inf[i].ATTR[n]->Name;
+					ATTR[m].Property = data->Inf[i].ATTR[n]->Property;
+					ATTR[m].Value = data->Inf[i].ATTR[n]->Value;
+				}
+			}
+
+		}
+
+
+
+
+	return S_OK;
+}
 
 /*
 	cout << "UpTime: " << day << "d " << hours << "h " << min << "m " << second << "s;"  << endl  ;
