@@ -28,6 +28,9 @@ using namespace std;
 
 #include <ctime>
 
+
+#include "DB.h"
+
 // Максимальное количество свойств
 const int MAX_PROPERTY = 15;
 // Максимальное количество экземпляров
@@ -125,51 +128,11 @@ private:
 	WMIInfoMany NetworkAdapterConfiguration = { "Адаптер №" };
 
 
-
-	
-
+	   	 
 
 
 
 
-
-
-
-
-
-
-
-
-
-// Информация о BIOS	
-	WMIInfo BIOS = {
-	//WMI CLASS
-		"Win32_BIOS",
-		"BIOS_INFO",
-		"BIOS",
-		{
-	// Начало инициализации внутренней структуры info	
-		{"Manufacturer", "Произведено", ""},
-		{"Version", "Версия", ""},
-		{"Caption", "Название", ""}
-	// Конец инициализации внутренней структyры info	
-	}};
-
-// Информация о дисках
-	WMIInfo DISK_I = {
-		//WMI CLASS
-			"Win32_DiskDrive",
-			"DISK_INFO",
-			"DISK",
-			{
-		// Начало инициализации внутренней структуры info
-			{"Size", "Размер [б]", ""},
-			{"Model", "Модель", ""},
-			{"Caption", "Название", ""}
-		// Конец инициализации внутренней структyры info	
-			} };
-
-	WMIInfoMany DISK = {"Диск №"};
 
 // Информация о partition
 	WMIInfo PARTITION_I = {
@@ -206,27 +169,6 @@ private:
 
 	WMIInfoMany KEYBOARD = { "Клавиатура №" };
 
-//Информация о CPU
-	WMIInfo CPU = {
-		//WMI CLASS
-			"Win32_Processor",
-			"CPU_INFO",
-			"CPU",
-			{
-		// Начало инициализации внутренней структуры info	
-			{"AddressWidth", "Разрядность", ""},
-			{"Architecture", "Архитектура", ""},
-			{"Name", "Имя", ""},
-			{"MaxClockSpeed", "Максимальная частота", ""},
-			{"CurrentClockSpeed", "Текущая частота", ""},
-			{"ExtClock", "Частота шины", ""},
-			{"NumberOfCores", "Количество ядер", ""},
-			{"NumberOfEnabledCore", "Количество активных ядер", ""},
-			{"NumberOfLogicalProcessors", "Количество логических ядер", ""},
-			{"L2CacheSize", "Размер L2", ""},
-			{"L3CacheSize", "Размер L3", ""}
-			// Конец инициализации внутренней структyры info	
-			} };
 
 	
 //Информация о Материнской Плате
@@ -350,15 +292,7 @@ private:
 			} };
 		
 	//MySQL 
-	sql::Driver *driver;
 	sql::Connection *con;
-	// Переменные для подключения
-	sql::SQLString DB_HOST = "tcp://gtcoda.ru:3306";
-	sql::SQLString DB_LOGIN = "oop";
-	sql::SQLString DB_PASSWORD = "3o4GAIQCHvPDPM6E";
-	sql::SQLString DB_BD = "test";
-	
-
 
 	HRESULT ManyWMIInfo(WMIInfoMany *many, WMIInfo *one);
 

@@ -2,38 +2,14 @@
 
 // Конструктор
 SysInfo::SysInfo() {
-	sql::PreparedStatement *prep_stmt;
-	sql::Statement *stmt;
-	sql::ResultSet *res;
+	
+	DBase& base = DBase::Instance();
 
-	std::time_t t = std::time(0);
-
-	driver = get_driver_instance();
-	// Устанавливаем соединение с базой
-	con = driver->connect(DB_HOST, DB_LOGIN, DB_PASSWORD);
-
-	// Выбиаем рабочую БД
-	con->setSchema(DB_BD);
-	// Получим id текущего сеанса 
-	prep_stmt = con->prepareStatement("INSERT INTO Manager(time) VALUES (?)");
-	prep_stmt->setInt64(1, (long)t);
-	prep_stmt->execute();
-
-	delete prep_stmt;
-
-	stmt = con->createStatement();
-	res = stmt->executeQuery("SELECT LAST_INSERT_ID ()");
-
-	if (res->next()) {
-		id = res->getInt(1);
-	}
-	else {
-		cout << "Íå ïîëó÷åí ID!";
-	}
-	delete stmt;
+	id = base.GetID();
+	base.GetConnector(&con);
 
 	
-	Info(&BIOS);
+	
 	/*
 	Info(&CPU);
 	Info(&DISK, &DISK_I);

@@ -7,18 +7,11 @@ using namespace std;
 #include <string>
 #pragma comment(lib, "wbemuuid.lib")
 
-#include "ControlWMI.h"
-#include "SysInfo.h"
+#include "DB.h"
 
-
-class InfoNetwork: public SysInfo {
-
-public:
-	HRESULT ShowWMIdata() {
-		id;
-		return S_OK;
-	}
-};
+#include "CPU.h"
+#include "BIOS.h"
+#include "DISK.h"
 
 
 
@@ -28,12 +21,14 @@ int main(int iArgCnt, char ** argv)
 	//system("chcp 65001 > nul");
 	system("chcp 1251 > nul");
 
+	CPU CPUInf;
+	CPUInf.Go();
 
-	// Экземпляр SysInfo
-	SysInfo info;
-	InfoNetwork infoNetworks;
-	infoNetworks.ShowWMIdata();
+	BIOS BIOSInf;
+	BIOSInf.Go();
 
+	DISK DISKInf;
+	DISKInf.Go();
 
 	system("pause");
 	return 0;
