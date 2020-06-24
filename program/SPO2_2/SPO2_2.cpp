@@ -22,9 +22,7 @@ using namespace std;
 #include "UPTIME.h"
 
 
-
-int main(int iArgCnt, char ** argv)
-{
+int main(int iArgCnt, char ** argv){	
 	// переходим в консоли на русский язык
 	//system("chcp 65001 > nul");
 	system("chcp 1251 > nul");

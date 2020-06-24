@@ -8,10 +8,13 @@ SysInfo::SysInfo() {
 	id = base.GetID();
 	base.GetConnector(&con);
 
+	OutXML& log = OutXML::Instance();
+
 }
 
 
 SysInfo::~SysInfo() {
+
 	delete con;
 }
 
@@ -463,3 +466,48 @@ HRESULT SysInfo::ShowWMIdata(WMIInfoManyClassManyObject *data) {
 	return S_OK;
 }
 
+/*===================== Запись информации в файл =====================*/
+HRESULT SysInfo::OutWMIdata(WMIInfo *data) {
+	if (OutXMLFile.is_open()){
+		
+		OutXMLFile << "<" << data->Table << ">" << endl;
+
+		
+
+		
+		for (ULONG n = 0; (n < MAX_PROPERTY) & (data->ATTR[n].Name != ""); n++) {
+			if (data->ATTR[n].Value == "") { continue; }
+			OutXMLFile << "	<row " << "property='" << data->ATTR[n].Property << "' Name='" << data->ATTR[n].Name << "'> " << data->ATTR[n].Value << " </row>" << endl;
+		}
+				
+		OutXMLFile << "</" << data->Table << ">" << endl;
+		
+		return S_OK;
+	}
+	return S_FALSE;
+}
+
+HRESULT  SysInfo::OutWMIdata(WMIInfoMany *data) {
+	if (OutXMLFile.is_open()){
+
+		OutXMLFile << "<" << data->Table << ">" << endl;
+
+		for (int i = 0; (i < MAX_INSTANCE) & (data->ATTR[i][0].Value != ""); i++) {
+
+			OutXMLFile << "<coll number='" << i << "'>" << endl;
+
+			for (int n = 0; (n < MAX_PROPERTY) & (data->ATTR[i][n].Name != ""); n++) {
+				if (data->ATTR[i][n].Value == "") { continue; }
+				OutXMLFile << "	<row " << "property='" << data->ATTR[i][n].Property << "' Name='" << data->ATTR[i][n].Name << "'> " << data->ATTR[i][n].Value << " </row>" << endl;
+			}
+			OutXMLFile << "<\coll>" << endl;
+
+		}
+		OutXMLFile << "</" << data->Table << ">" << endl;
+
+		return S_OK;
+	}
+	return S_FALSE;
+
+
+}

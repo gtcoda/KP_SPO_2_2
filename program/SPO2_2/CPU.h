@@ -32,6 +32,9 @@ private:
 
 public:
 	HRESULT Go(void);
+	HRESULT GoXML(WMIInfo * CPU);
+
+
 
 };
 

@@ -5,6 +5,7 @@
 using namespace std;
 #include <iostream>
 #include <iomanip>
+#include <fstream>
 #include <comdef.h>
 #include <Wbemidl.h>
 #include <algorithm>
@@ -30,6 +31,7 @@ using namespace std;
 
 
 #include "DB.h"
+#include "OutXML.h"
 
 // Максимальное количество свойств
 const int MAX_PROPERTY = 15;
@@ -135,16 +137,17 @@ private:
 	} };
 
 
-	
-	
-
-
-
 		
 	//MySQL 
 	sql::Connection *con;
 
 	HRESULT ManyWMIInfo(WMIInfoMany *many, WMIInfo *one);
+
+
+
+	string XMLFile = "info.xml";
+	std::ofstream OutXMLFile;
+
 
 public:
 	int id = 0;
@@ -168,6 +171,13 @@ public:
 	HRESULT ShowWMIdata(WMIInfoMany *data);
 	HRESULT ShowWMIdata(std::vector <WMIInfo> *data, WMIInfo * st);
 	HRESULT ShowWMIdata(WMIInfoManyClassManyObject *data);
+
+	// Записать данные в файл в формате XML
+	HRESULT OutWMIdata(WMIInfo *data);
+	HRESULT OutWMIdata(WMIInfoMany *data);
+	HRESULT OutWMIdata(std::vector <WMIInfo> *data, WMIInfo * st);
+	HRESULT OutWMIdata(WMIInfoManyClassManyObject *data);
+
 	// Отправить данные в MySQL
 	HRESULT PushMysql(WMIInfo *data);
 	HRESULT PushMysql(WMIInfoMany *data);
