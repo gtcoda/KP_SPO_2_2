@@ -10,6 +10,9 @@ using namespace std;
 #include <Wbemidl.h>
 #include <algorithm>
 #include <vector>
+#include <string>
+
+#include "ConvertStr.h"
 
 class OutXML
 {
@@ -24,8 +27,7 @@ public:
 	}
 
 	string XMLFile = "info.xml";
-	std::ofstream out;
-
+	
 	HRESULT print(string s);
 
 

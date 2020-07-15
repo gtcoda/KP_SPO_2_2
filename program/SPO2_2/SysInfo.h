@@ -10,6 +10,7 @@ using namespace std;
 #include <Wbemidl.h>
 #include <algorithm>
 #include <vector>
+#include <string>
 
 #include "windows.h"
 
@@ -32,6 +33,7 @@ using namespace std;
 
 #include "DB.h"
 #include "OutXML.h"
+
 
 // Максимальное количество свойств
 const int MAX_PROPERTY = 15;
@@ -145,8 +147,7 @@ private:
 
 
 
-	string XMLFile = "info.xml";
-	std::ofstream OutXMLFile;
+	OutXML& OXML = OutXML::Instance();
 
 
 public:

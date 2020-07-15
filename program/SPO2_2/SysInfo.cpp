@@ -4,11 +4,11 @@
 SysInfo::SysInfo() {
 	
 	DBase& base = DBase::Instance();
-
+	
 	id = base.GetID();
 	base.GetConnector(&con);
 
-	OutXML& log = OutXML::Instance();
+	
 
 }
 
@@ -23,6 +23,7 @@ HRESULT SysInfo::Info(WMIInfo *data) {
 	WMIData(data);
 	ShowWMIdata(data);
 	PushMysql(data);
+	OutWMIdata(data);
 	return S_OK;
 }
 
@@ -31,6 +32,7 @@ HRESULT SysInfo::Info(WMIInfoMany *data, WMIInfo *data_i) {
 	WMIData(data);
 	ShowWMIdata(data);
 	PushMysql(data);
+	OutWMIdata(data);
 	return S_OK;
 
 }
@@ -251,7 +253,7 @@ HRESULT SysInfo::WMIData(WMIInfo *data) {
 					if (!FAILED(hro)) {
 						// Преобразуем ответ в строку
 						hr = VariantChangeType(&vtProp, &vtProp, 0, VT_BSTR);
-						data->ATTR[n].Value =  (ConvertBSTRToMBS(vtProp.bstrVal));
+						data->ATTR[n].Value = cp1251_to_utf8(ConvertBSTRToMBS(vtProp.bstrVal).c_str());
 					}
 
 
@@ -300,7 +302,7 @@ HRESULT SysInfo::WMIData(WMIInfoMany *data) {
 					if (!FAILED(hro)) {
 						// Преобразуем ответ в строку
 						hr = VariantChangeType(&vtProp, &vtProp, 0, VT_BSTR);
-						data->ATTR[i][n].Value = ConvertBSTRToMBS(vtProp.bstrVal);
+						data->ATTR[i][n].Value = cp1251_to_utf8(ConvertBSTRToMBS(vtProp.bstrVal).c_str());
 					}
 				}
 				apObj[i]->Release();
@@ -357,7 +359,7 @@ HRESULT SysInfo::WMIData(std::vector <WMIInfo> *data, WMIInfo *st) {
 
 						data->at(count).ATTR[n].Name = st->ATTR[n].Name;
 						data->at(count).ATTR[n].Property = st->ATTR[n].Property;
-						data->at(count).ATTR[n].Value = ConvertBSTRToMBS(vtProp.bstrVal);
+						data->at(count).ATTR[n].Value = cp1251_to_utf8(ConvertBSTRToMBS(vtProp.bstrVal).c_str());
 
 					}
 				}
@@ -383,11 +385,11 @@ HRESULT SysInfo::WMIData(WMIInfoManyClassManyObject *data) {
 /*===================== Отображение информации =====================*/
 HRESULT SysInfo::ShowWMIdata(WMIInfo *data) {
 	cout << endl;
-	cout << "=======    " << utf8_to_cp1251(data->Description.c_str()) << "   =======" << endl;
+	cout << "=======    " << data->Description << "   =======" << endl;
 
 	for (ULONG n = 0; (n < MAX_PROPERTY) & (data->ATTR[n].Name != ""); n++) {
 		if (data->ATTR[n].Value == "") { continue; }
-		cout << utf8_to_cp1251( data->ATTR[n].Name.c_str()) << ": " << data->ATTR[n].Value << ";" << endl;
+		cout << data->ATTR[n].Name << ": " << data->ATTR[n].Value << ";" << endl;
 	}
 
 	return S_OK;
@@ -395,14 +397,14 @@ HRESULT SysInfo::ShowWMIdata(WMIInfo *data) {
 
 HRESULT SysInfo::ShowWMIdata(WMIInfoMany *data) {
 	cout << endl;
-	cout << "=======    " << utf8_to_cp1251(data->Description.c_str()) << "   =======" << endl;
+	cout << "=======    " << data->Description << "   =======" << endl;
 	for (int i = 0; (i < MAX_INSTANCE) & (data->ATTR[i][0].Value != ""); i++) {
 
-		cout << utf8_to_cp1251(data->DescriptionIterator.c_str()) << " " << i << endl;
+		cout << data->DescriptionIterator << " " << i << endl;
 
 		for (int n = 0; (n < MAX_PROPERTY) & (data->ATTR[i][n].Name != ""); n++) {
 			if (data->ATTR[i][n].Value == "") { continue; }
-			cout << utf8_to_cp1251( data->ATTR[i][n].Name.c_str()) << ": " << data->ATTR[i][n].Value << ";" << endl;
+			cout <<  data->ATTR[i][n].Name << ": " << data->ATTR[i][n].Value << ";" << endl;
 		}
 		cout << endl;
 
@@ -412,7 +414,7 @@ HRESULT SysInfo::ShowWMIdata(WMIInfoMany *data) {
 
 HRESULT SysInfo::ShowWMIdata(std::vector <WMIInfo> *data, WMIInfo *st) {
 	cout << endl;
-	cout << "=======    " << utf8_to_cp1251(st->Description.c_str()) << "   =======" << endl;
+	cout << "=======    " << st->Description << "   =======" << endl;
 
 
 	for (WMIInfo inf : *data) {
@@ -427,7 +429,7 @@ HRESULT SysInfo::ShowWMIdata(std::vector <WMIInfo> *data, WMIInfo *st) {
 
 		str += ";";
 
-		cout << utf8_to_cp1251(str.c_str()) << endl;
+		cout << str << endl;
 	}
 
 
@@ -440,9 +442,6 @@ HRESULT SysInfo::ShowWMIdata(std::vector <WMIInfo> *data, WMIInfo *st) {
 HRESULT SysInfo::ShowWMIdata(WMIInfoManyClassManyObject *data) {
 
 	info ATTR[25];
-
-
-
 
 	
 		// Прохожим по всем экземпляром
@@ -468,46 +467,41 @@ HRESULT SysInfo::ShowWMIdata(WMIInfoManyClassManyObject *data) {
 
 /*===================== Запись информации в файл =====================*/
 HRESULT SysInfo::OutWMIdata(WMIInfo *data) {
-	if (OutXMLFile.is_open()){
-		
-		OutXMLFile << "<" << data->Table << ">" << endl;
-
-		
-
-		
-		for (ULONG n = 0; (n < MAX_PROPERTY) & (data->ATTR[n].Name != ""); n++) {
-			if (data->ATTR[n].Value == "") { continue; }
-			OutXMLFile << "	<row " << "property='" << data->ATTR[n].Property << "' Name='" << data->ATTR[n].Name << "'> " << data->ATTR[n].Value << " </row>" << endl;
-		}
-				
-		OutXMLFile << "</" << data->Table << ">" << endl;
-		
-		return S_OK;
+	OXML.print( "<" + data->Table + ">" );
+			
+	for (ULONG n = 0; (n < MAX_PROPERTY) & (data->ATTR[n].Name != ""); n++) {
+		if (data->ATTR[n].Value == "") { continue; }
+		OXML.print ( "	<row property='" + data->ATTR[n].Property + "' Name='" + data->ATTR[n].Name + "'> " + data->ATTR[n].Value + " </row>" );
 	}
-	return S_FALSE;
+				
+	OXML.print("</" + data->Table + ">");
+		
+	return S_OK;
+	
 }
+
 
 HRESULT  SysInfo::OutWMIdata(WMIInfoMany *data) {
-	if (OutXMLFile.is_open()){
 
-		OutXMLFile << "<" << data->Table << ">" << endl;
 
-		for (int i = 0; (i < MAX_INSTANCE) & (data->ATTR[i][0].Value != ""); i++) {
+	OXML.print ( "<" + data->Table + ">" );
 
-			OutXMLFile << "<coll number='" << i << "'>" << endl;
+	for (int i = 0; (i < MAX_INSTANCE) & (data->ATTR[i][0].Value != ""); i++) {
 
-			for (int n = 0; (n < MAX_PROPERTY) & (data->ATTR[i][n].Name != ""); n++) {
-				if (data->ATTR[i][n].Value == "") { continue; }
-				OutXMLFile << "	<row " << "property='" << data->ATTR[i][n].Property << "' Name='" << data->ATTR[i][n].Name << "'> " << data->ATTR[i][n].Value << " </row>" << endl;
-			}
-			OutXMLFile << "<\coll>" << endl;
+		OXML.print("<coll number='" + to_string(i) + "'>");
 
+		for (int n = 0; (n < MAX_PROPERTY) & (data->ATTR[i][n].Name != ""); n++) {
+			if (data->ATTR[i][n].Value == "") { continue; }
+			OXML.print("<row property='" + data->ATTR[i][n].Property + "' Name='" + data->ATTR[i][n].Name + "'> " + data->ATTR[i][n].Value + " </row>" );
 		}
-		OutXMLFile << "</" << data->Table << ">" << endl;
+		OXML.print ("<\coll>");
 
-		return S_OK;
 	}
-	return S_FALSE;
+	OXML.print ( "</" + data->Table + ">");
+
+	return S_OK;
+
 
 
 }
+
