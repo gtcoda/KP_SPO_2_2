@@ -2,8 +2,14 @@
 
 #ifndef NETWORK_H
 #define NETWORK_H
+#define _CRT_SECURE_NO_WARNINGS
 #include "SysInfo.h"
 
+
+#include <stdio.h>
+#include <windows.h>
+#include <iphlpapi.h>
+#pragma comment(lib, "IPHLPAPI.lib")
 
 
 class NETWORK : public SysInfo {
@@ -16,21 +22,23 @@ private:
 		//WMI CLASS
 			"Win32_NetworkAdapter",
 			"NetworkAdapter_INFO",
-			"NetworkAdapter",
+			"NETWORK",
 			{
 		// Начало инициализации внутренней структуры info
-			{"Caption", "Наименование устройства: ", ""},
+			{"AdapterName", "Имя устройства: ", ""},
 			{"Description", "Описание: ", ""},
-			{"DeviceID", "Идентификатор устройства: ", ""},
-			{"Manufacturer", "Производитель: ", ""},
-			{"MaxSpeed", "Максимальная скорость: ", ""},
-			{"NetworkAddresses[]", "IP-адрес: ", ""},
-			{"Status", "Статус устройства: ", ""}
+			{"MAC", "MAC адрес: ", ""},
+			{"IP", "IP адрес: ", ""},
+			{"Gateway", "Шлюз: ", ""},
+			{"DHCP", "DNCP статус: ", ""},
+			{"IP_DHCP", "DNCP сервер: ", ""}
 			// Конец инициализации внутренней структyры info	
 		} };
 
 	WMIInfoMany NetworkAdapter = { "Адаптер №" };
 
+
+	HRESULT GetNetworkInfo(WMIInfoMany *NetworkAdapter);
 
 public:
 	HRESULT Go(void);

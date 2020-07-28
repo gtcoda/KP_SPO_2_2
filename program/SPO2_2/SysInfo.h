@@ -16,8 +16,10 @@ using namespace std;
 
 #include "ControlWMI.h"
 #include "ConvertStr.h"
+#include "OutXML.h"
 
 #pragma comment(lib, "wbemuuid.lib")
+
 /*    MySQL connector 1.3   */
 #pragma comment(lib,"mysqlcppconn-static.lib")
 #pragma comment(lib,"mysqlcppconn.lib")
@@ -30,9 +32,9 @@ using namespace std;
 
 #include <ctime>
 
-
 #include "DB.h"
-#include "OutXML.h"
+
+
 
 
 // Максимальное количество свойств
@@ -85,68 +87,11 @@ private:
 
 	ControlWMI& objWMI = ControlWMI::Instance();
 
-	// Экземляры информационной структуры
-	WMIInfo NetworkAdapterConfiguration_I = {
-		//WMI CLASS
-			"Win32_NetworkAdapterConfiguration",
-			"NetworkAdapterConfiguration_INFO",
-			"NetworkAdapter",
-			{
-		// Начало инициализации внутренней структуры info
-			{"Caption", "Наименование устройства: ", ""},
-			{"DefaultIPCateway", "Шлюз: ", ""},
-			{"DefaultTTL", "TTL: ", ""},
-			{"DHCPServer", "DHCP : ", ""},
-			{"DNSHostName", "DNS: ", ""},
-			{"IPAdress", "IP-адрес: ", ""}
-			// Конец инициализации внутренней структyры info	
-		} };
-
-	WMIInfoMany NetworkAdapterConfiguration = { "Адаптер №" };
-
-
-//Информация о Материнской Плате
-	WMIInfoManyClass BB = { {
-			{// Первый класс на разбор
-				"Win32_BaseBoard",
-				"BaseBoard_INFO",
-				"BaseBoard",
-				{// Начало инициализации внутренней структуры info	
-					{"Caption", "Наименование Устройства", ""},
-					{"Description", "Описание", ""},
-					{"Manufacturer", "Производитель", ""},
-					{"Product", "Тип", ""},
-					{"SerialNumber", "Серийный номер", ""},
-					{"Tag", "Идентификатор", ""},
-					{"Version", "Версия", ""}
-				}// Конец инициализации внутренней структyры info	
-			},
-			{// Второй класс на разбор
-				"Win32_MotherboardDevice",
-				"BaseBoard_INFO",
-				"BaseBoard",
-				{// Начало инициализации внутренней структуры info	
-					{"Caption", "Наименование Устройства", ""},
-					{"Description", "Описание", ""},
-					{"SystemName ", "Имя компьютера", ""},
-					{"DeviceID ", "Идентификатор", ""},
-					{"PrimaryBusType ", "Тип первичной шины", ""},
-					{"SecondaryBusType ", "Тип вторичной шины", ""},
-				}// Конец инициализации внутренней структyры info	
-			},
-		{}
-
-	} };
-
-
-		
 	//MySQL 
 	sql::Connection *con;
 
-	HRESULT ManyWMIInfo(WMIInfoMany *many, WMIInfo *one);
-
-
-
+	
+	   
 	OutXML& OXML = OutXML::Instance();
 
 
@@ -185,7 +130,7 @@ public:
 	HRESULT PushMysql(std::vector <WMIInfo> *data, WMIInfo * st);
 
 
-	
+	HRESULT ManyWMIInfo(WMIInfoMany *many, WMIInfo *one);
 };
 
 

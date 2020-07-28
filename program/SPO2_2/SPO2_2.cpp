@@ -7,6 +7,10 @@ using namespace std;
 #include <string>
 #pragma comment(lib, "wbemuuid.lib")
 
+
+
+
+
 #include "DB.h"
 
 #include "CPU.h"
@@ -21,15 +25,16 @@ using namespace std;
 #include "PROCESS.h"
 #include "UPTIME.h"
 
+
+
 int main(int iArgCnt, char ** argv){	
 	// переходим в консоли на русский язык
 	system("chcp 65001 > nul");
-	//system("chcp 1251 > nul");
 
+	NETWORK NETWORKInf;
+	NETWORKInf.Go();
 
-
-	
-
+/*
 	UPTIME UPTIMEInf;
 	UPTIMEInf.Go();
 
@@ -63,7 +68,7 @@ int main(int iArgCnt, char ** argv){
 	PROCESS PROCESSInf;
 	PROCESSInf.Go();
 
-	
+*/
 
 	system("pause");
 	return 0;

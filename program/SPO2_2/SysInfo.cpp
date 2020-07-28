@@ -4,17 +4,13 @@
 SysInfo::SysInfo() {
 	
 	DBase& base = DBase::Instance();
-	
+	// Получим ID
 	id = base.GetID();
 	base.GetConnector(&con);
-
-	
-
 }
 
 
 SysInfo::~SysInfo() {
-
 	delete con;
 }
 
