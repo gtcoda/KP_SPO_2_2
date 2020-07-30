@@ -131,6 +131,7 @@ public:
 
 
 	HRESULT ManyWMIInfo(WMIInfoMany *many, WMIInfo *one);
+	HRESULT WMIDataExtruder(string * str,VARIANT * vtProp);
 };
 
 

@@ -247,9 +247,28 @@ HRESULT SysInfo::WMIData(WMIInfo *data) {
 					_bstr_t prName = ConvertMBSToBSTR(data->ATTR[n].Property);
 					hro = apObj[i]->Get(prName, 0, &vtProp, 0, 0);
 					if (!FAILED(hro)) {
-						// Преобразуем ответ в строку
-						hr = VariantChangeType(&vtProp, &vtProp, 0, VT_BSTR);
-						data->ATTR[n].Value = cp1251_to_utf8(ConvertBSTRToMBS(vtProp.bstrVal).c_str());
+						
+						WMIDataExtruder(&(data->ATTR[n].Value), &vtProp);
+						/*
+						// Если ответ число
+						if (vtProp.vt == VT_I4) {
+							hr = VariantChangeType(&vtProp, &vtProp, 0, VT_I4);
+							string res;
+							res = std::to_string((_int64)(vtProp.uintVal));
+
+
+							data->ATTR[n].Value = cp1251_to_utf8(res.c_str());
+						}
+						else {
+						   	// Преобразуем ответ в строку
+							hr = VariantChangeType(&vtProp, &vtProp, 0, VT_BSTR);
+							data->ATTR[n].Value = cp1251_to_utf8(ConvertBSTRToMBS(vtProp.bstrVal).c_str());
+						}
+						*/
+
+
+
+
 					}
 
 
@@ -378,6 +397,35 @@ HRESULT SysInfo::WMIData(WMIInfoManyClassManyObject *data) {
 	}
 	return S_OK;
 }
+
+
+
+HRESULT SysInfo::WMIDataExtruder(string * str, VARIANT *vtProp) {
+	HRESULT hr;
+	// Если ответ число
+	if (vtProp->vt == VT_I4) {
+		hr = VariantChangeType(vtProp, vtProp, 0, VT_I4);
+		string res;
+		res = std::to_string((_int64)(vtProp->uintVal));
+
+
+		*str = cp1251_to_utf8(res.c_str());
+	}
+	else {
+		// Преобразуем ответ в строку
+		hr = VariantChangeType(vtProp, vtProp, 0, VT_BSTR);
+		*str = cp1251_to_utf8(ConvertBSTRToMBS(vtProp->bstrVal).c_str());
+	}
+
+	return hr;
+
+}
+
+
+
+
+
+
 /*===================== Отображение информации =====================*/
 HRESULT SysInfo::ShowWMIdata(WMIInfo *data) {
 	cout << endl;

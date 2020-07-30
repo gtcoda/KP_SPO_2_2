@@ -24,6 +24,7 @@ using namespace std;
 #include "MONITOR.h"
 #include "PROCESS.h"
 #include "UPTIME.h"
+#include "VIDEO.h"
 
 
 
@@ -31,10 +32,10 @@ int main(int iArgCnt, char ** argv){
 	// переходим в консоли на русский язык
 	system("chcp 65001 > nul");
 
-	NETWORK NETWORKInf;
-	NETWORKInf.Go();
+	VIDEO VIDEOInf;
+	VIDEOInf.Go();
 
-/*
+
 	UPTIME UPTIMEInf;
 	UPTIMEInf.Go();
 
@@ -68,7 +69,7 @@ int main(int iArgCnt, char ** argv){
 	PROCESS PROCESSInf;
 	PROCESSInf.Go();
 
-*/
+
 
 	system("pause");
 	return 0;
