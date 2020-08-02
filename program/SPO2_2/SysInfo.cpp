@@ -429,7 +429,6 @@ HRESULT SysInfo::ShowWMIdata(std::vector <WMIInfo> *data, WMIInfo *st) {
 	cout << endl;
 	cout << "=======    " << st->Description << "   =======" << endl;
 
-
 	for (WMIInfo inf : *data) {
 		inf.ATTR;
 		std::string str = "";
@@ -445,18 +444,13 @@ HRESULT SysInfo::ShowWMIdata(std::vector <WMIInfo> *data, WMIInfo *st) {
 		cout << str << endl;
 	}
 
-
-
-
-
 	return S_OK;
 }
 
 HRESULT SysInfo::ShowWMIdata(WMIInfoManyClassManyObject *data) {
 
 	info ATTR[25];
-
-	
+		
 		// Прохожим по всем экземпляром
 		for (int i = 0; i < MAX_INSTANCE; i++) {
 		
@@ -471,9 +465,6 @@ HRESULT SysInfo::ShowWMIdata(WMIInfoManyClassManyObject *data) {
 			}
 
 		}
-
-
-
 
 	return S_OK;
 }

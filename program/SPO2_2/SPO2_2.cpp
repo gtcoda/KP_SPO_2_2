@@ -7,10 +7,6 @@ using namespace std;
 #include <string>
 #pragma comment(lib, "wbemuuid.lib")
 
-
-
-
-
 #include "DB.h"
 
 #include "CPU.h"
