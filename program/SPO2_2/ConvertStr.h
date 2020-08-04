@@ -5,6 +5,15 @@
 #include <iomanip>
 #include <comdef.h>
 #include <Wbemidl.h>
+#include <fstream>
+#include <algorithm>
+#include <vector>
+#include <string>
+
+
+
+
+
 
 std::string ConvertBSTRToMBS(BSTR bstr);
 std::string ConvertWCSToMBS(const wchar_t* pstr, long wslen);
@@ -13,5 +22,6 @@ BSTR ConvertMBSToBSTR(const std::string& str);
 std::string utf8_to_cp1251(const char *str);
 std::string cp1251_to_utf8(const char *str);
 
+std::string WstrToUtf8Str(const std::wstring& wstr);
 
 #endif

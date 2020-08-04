@@ -34,6 +34,41 @@ BSTR ConvertMBSToBSTR(const std::string& str)
 
 
 
+
+std::string WstrToUtf8Str(const std::wstring& wstr)
+{
+	std::string retStr;
+	if (!wstr.empty())
+	{
+		int sizeRequired = WideCharToMultiByte(CP_UTF8, 0, wstr.c_str(), -1, NULL, 0, NULL, NULL);
+
+		if (sizeRequired > 0)
+		{
+			std::vector<char> utf8String(sizeRequired);
+			int bytesConverted = WideCharToMultiByte(CP_UTF8, 0, wstr.c_str(),
+				-1, &utf8String[0], utf8String.size(), NULL,
+				NULL);
+			if (bytesConverted != 0)
+			{
+				retStr = &utf8String[0];
+			}
+			else
+			{
+
+			}
+		}
+	}
+	return retStr;
+}
+
+
+
+
+
+
+
+
+
 std::string utf8_to_cp1251(const char *str) {
 	std::string res;
 	WCHAR *ures = NULL;
