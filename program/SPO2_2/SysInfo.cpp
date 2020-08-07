@@ -3,7 +3,7 @@
 // Конструктор
 SysInfo::SysInfo() {
 	
-	DBase& base = DBase::Instance();
+	DBase &base = DBase::Instance();
 	// Получим ID
 	id = base.GetID();
 	base.GetConnector(&con);
@@ -58,6 +58,12 @@ HRESULT SysInfo::ManyWMIInfo(WMIInfoMany *many, WMIInfo *one) {
 
 /*===================== Отправка в БД =====================*/
 HRESULT SysInfo::PushMysql(WMIInfo *data) {
+	// Если соединенния с базой нет. Не отправляем.
+	DBase &base = DBase::Instance();
+	if (!(base.STATUS)) {
+		return S_FALSE;
+	}
+
 
 	try {
 
@@ -106,6 +112,11 @@ HRESULT SysInfo::PushMysql(WMIInfo *data) {
 }
 
 HRESULT SysInfo::PushMysql(WMIInfoMany *data) {
+	// Если соединенния с базой нет. Не отправляем.
+	DBase &base = DBase::Instance();
+	if (!(base.STATUS)) {
+		return S_FALSE;
+	}
 
 	try {
 
@@ -160,6 +171,11 @@ HRESULT SysInfo::PushMysql(WMIInfoMany *data) {
 }
 
 HRESULT SysInfo::PushMysql(std::vector <WMIInfo> *data, WMIInfo * st) {
+	// Если соединенния с базой нет. Не отправляем.
+	DBase &base = DBase::Instance();
+	if (!(base.STATUS)) {
+		return S_FALSE;
+	}
 
 	try {
 

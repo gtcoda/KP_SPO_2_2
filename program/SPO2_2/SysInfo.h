@@ -89,9 +89,7 @@ private:
 
 	//MySQL 
 	sql::Connection *con;
-
-	
-	   
+		   
 	OutXML& OXML = OutXML::Instance();
 
 

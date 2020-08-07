@@ -13,6 +13,8 @@ using namespace std;
 #include <algorithm>
 #include <vector>
 
+#pragma comment(lib, "wininet.lib")
+#include <wininet.h>
 
 /*    MySQL connector 1.3   */
 #pragma comment(lib,"mysqlcppconn-static.lib")
@@ -41,19 +43,22 @@ public:
 	HRESULT GetConnector(sql::Connection **conget);
 	// Получить id сессии
 	int GetID(void);
-
+	bool STATUS = 0;
 
 private:
 
 	//MySQL 
 	sql::Driver *driver;
 	sql::Connection *con;
+	LPCWSTR HOST = L"gtcoda.ru";
 	// Переменные для подключения
 	sql::SQLString DB_HOST = "tcp://gtcoda.ru:3306";
 	sql::SQLString DB_LOGIN = "oop";
 	sql::SQLString DB_PASSWORD = "3o4GAIQCHvPDPM6E";
 	sql::SQLString DB_BD = "test";
 	int id;
+
+	string HOST_BAD = "Нет связи с БД. Отправка данных невозможна.";
 
 	DBase();
 	DBase(const DBase& root) = delete;

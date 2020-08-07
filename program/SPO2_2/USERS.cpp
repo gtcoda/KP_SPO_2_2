@@ -10,9 +10,6 @@
 HRESULT USERS::Go(void){
 	ManyWMIInfo(&USERSstr, &USERS_I);
 
-
-
-
 	LPUSER_INFO_0 pBuf_0 = NULL;
 	LPUSER_INFO_0 pTmpBuf;
 	DWORD dwLevel = 0;
@@ -24,10 +21,8 @@ HRESULT USERS::Go(void){
 	DWORD dwTotalCount = 0;
 	NET_API_STATUS nStatus;
 	LPTSTR pszServerName = NULL;
-
-
+	
 	LPCWSTR user[10];
-	uint8_t n = 0;
 	uint8_t i;
 
 
@@ -44,16 +39,13 @@ HRESULT USERS::Go(void){
 
 		if ((nStatus == NERR_Success) || (nStatus == ERROR_MORE_DATA)) {
 			if ((pTmpBuf = pBuf_0) != NULL) {
-				//
-				// Loop through the entries.
-				//
+	
 				for (i = 0; (i < dwEntriesRead); i++) {
 					assert(pTmpBuf != NULL);
 
 					if (pTmpBuf == NULL) 	break;
 					
-					user[n] = pTmpBuf->usri0_name;
-					n++;
+					user[dwTotalCount] = pTmpBuf->usri0_name;
 
 					pTmpBuf++;
 					dwTotalCount++;
@@ -71,7 +63,7 @@ HRESULT USERS::Go(void){
 
 	if (pBuf_0 != NULL) NetApiBufferFree(pBuf_0);
 
-	for (uint8_t j = 0; n > 0; n--, j++) {
+	for (uint8_t j = 0; dwTotalCount > 0; dwTotalCount--, j++) {
 
 
 		LPUSER_INFO_2 pBuf2 = NULL;
@@ -79,7 +71,7 @@ HRESULT USERS::Go(void){
 
 		wchar_t usersname[255];
 
-		wcscpy_s(usersname, 255, user[n - 1]);
+		wcscpy_s(usersname, 255, user[dwTotalCount - 1]);
 
 
 		nStatus = NetUserGetInfo(NULL, usersname, 2, (LPBYTE *)&pBuf2);
@@ -151,51 +143,3 @@ HRESULT USERS::Go(void){
 
 	return S_OK;
 }
-
-
-
-
-
-
-/*
-				pBuf2 = (LPUSER_INFO_2)pBuf2;
-				wprintf(L"\tUser account name: %s\n", pBuf2->usri2_name);
-				wprintf(L"\tPassword: %s\n", pBuf2->usri2_password);
-				wprintf(L"\tPassword age (seconds): %d\n",
-					pBuf2->usri2_password_age);
-				wprintf(L"\tPrivilege level: %d\n", pBuf2->usri2_priv);
-				wprintf(L"\tHome directory: %s\n", pBuf2->usri2_home_dir);
-				wprintf(L"\tComment: %s\n", pBuf2->usri2_comment);
-				wprintf(L"\tFlags (in hex): %x\n", pBuf2->usri2_flags);
-				wprintf(L"\tScript path: %s\n", pBuf2->usri2_script_path);
-				wprintf(L"\tAuth flags (in hex): %x\n",
-					pBuf2->usri2_auth_flags);
-				wprintf(L"\tFull name: %s\n", pBuf2->usri2_full_name);
-				wprintf(L"\tUser comment: %s\n", pBuf2->usri2_usr_comment);
-				wprintf(L"\tParameters: %s\n", pBuf2->usri2_parms);
-				wprintf(L"\tWorkstations: %s\n", pBuf2->usri2_workstations);
-				wprintf
-				(L"\tLast logon (seconds since January 1, 1970 GMT): %d\n",
-					pBuf2->usri2_last_logon);
-				wprintf
-				(L"\tLast logoff (seconds since January 1, 1970 GMT): %d\n",
-					pBuf2->usri2_last_logoff);
-				wprintf
-				(L"\tAccount expires (seconds since January 1, 1970 GMT): %d\n",
-					pBuf2->usri2_acct_expires);
-				wprintf(L"\tMax storage: %d\n", pBuf2->usri2_max_storage);
-				wprintf(L"\tUnits per week: %d\n",
-					pBuf2->usri2_units_per_week);
-				wprintf(L"\tLogon hours:");
-				for (j = 0; j < 21; j++) {
-					printf(" %x", (BYTE)pBuf2->usri2_logon_hours[j]);
-				}
-				wprintf(L"\n");
-				wprintf(L"\tBad password count: %d\n",
-					pBuf2->usri2_bad_pw_count);
-				wprintf(L"\tNumber of logons: %d\n",
-					pBuf2->usri2_num_logons);
-				wprintf(L"\tLogon server: %s\n", pBuf2->usri2_logon_server);
-				wprintf(L"\tCountry code: %d\n", pBuf2->usri2_country_code);
-				wprintf(L"\tCode page: %d\n", pBuf2->usri2_code_page);
-*/

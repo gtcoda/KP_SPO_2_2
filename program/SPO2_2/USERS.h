@@ -35,19 +35,10 @@ private:
 
 	WMIInfoMany USERSstr = { "Пользователь " };
 
-
-
-
-
 public:
 	HRESULT Go(void);
 
-
-
-
 };
-
-
 
 
 #endif#pragma once
