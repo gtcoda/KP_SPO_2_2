@@ -41,8 +41,6 @@ ControlWMI::ControlWMI() {
 	// Step 3: ---------------------------------------------------
 	// Obtain the initial locator to WMI -------------------------
 
-	//IWbemLocator *pLoc = NULL;
-
 	hr = CoCreateInstance(
 		CLSID_WbemLocator,
 		0,

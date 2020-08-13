@@ -23,22 +23,15 @@ class ControlWMI // определение класса
 private:
 	IWbemServices * pSvc = NULL;
 	IWbemLocator *pLoc = NULL;
-
 public:
-
-	static ControlWMI& Instance()
-	{
+	static ControlWMI& Instance(){
 		static ControlWMI theSingleInstance;
 		return theSingleInstance;
 	}
-
-
 	ControlWMI();
 	~ControlWMI();
-
 	// Получение результирующего набора обьектов
 	HRESULT Get(BSTR Query, IEnumWbemClassObject** pEnumerator);
-
 };
 
 

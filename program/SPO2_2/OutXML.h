@@ -14,22 +14,16 @@ using namespace std;
 
 #include "ConvertStr.h"
 
-class OutXML
-{
+class OutXML{
 public:
 
-
-
-	static OutXML& Instance()
-	{
+	static OutXML& Instance(){
 		static OutXML theSingleInstance;
 		return theSingleInstance;
 	}
 
 	string XMLFile = "info.xml";
-	
 	HRESULT print(string s);
-
 
 private:
 

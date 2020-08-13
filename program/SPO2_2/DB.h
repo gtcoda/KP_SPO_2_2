@@ -30,9 +30,7 @@ using namespace std;
 class DBase
 {
 public:
-
 	
-
 	static DBase& Instance()
 	{
 		static DBase theSingleInstance;

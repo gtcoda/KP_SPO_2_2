@@ -3,7 +3,7 @@
 
 OutXML::OutXML() {
 	std::ofstream out;
-	out.open(XMLFile); // окрываем файл для записи
+	out.open(XMLFile); // открываем файл для записи
 	if (out.is_open()){
 		string d = "<?xml version=\"1.0\"?>";
 		out << d << endl;
