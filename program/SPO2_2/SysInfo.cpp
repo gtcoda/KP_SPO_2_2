@@ -92,7 +92,8 @@ HRESULT SysInfo::PushMysql(WMIInfo *data) {
 		prep_stmt = con->prepareStatement(sql::SQLString(sql.c_str()));
 		prep_stmt->setInt64(1, id);
 		for (int i = 0; (i < MAX_PROPERTY) & (data->ATTR[i].Name != ""); i++) {
-			prep_stmt->setString(i + 2, sql::SQLString( cp1251_to_utf8(data->ATTR[i].Value.c_str()).c_str() ));
+//			prep_stmt->setString(i + 2, sql::SQLString( cp1251_to_utf8(data->ATTR[i].Value.c_str()).c_str() ));
+			prep_stmt->setString(i + 2, sql::SQLString(data->ATTR[i].Value.c_str()));
 		}
 
 		prep_stmt->execute();
@@ -240,10 +241,8 @@ HRESULT SysInfo::WMIData(WMIInfo *data) {
 	IEnumWbemClassObject * pEnumerator = NULL;
 
 	std::string q = "SELECT * FROM " + data->WMIClass;
-	objWMI.Get((_bstr_t)ConvertMBSToBSTR(q), &pEnumerator);
+	hr = objWMI.Get((_bstr_t)ConvertMBSToBSTR(q), &pEnumerator);
 
-	hr = WBEM_S_NO_ERROR;
-	// Final Next will return WBEM_S_FALSE
 	while (WBEM_S_NO_ERROR == hr)
 	{
 		ULONG            uReturned;
@@ -254,8 +253,7 @@ HRESULT SysInfo::WMIData(WMIInfo *data) {
 		if (SUCCEEDED(hr)) {
 			// Перебираем обьекты
 			for (ULONG i = 0; i < uReturned; i++) {
-
-
+				
 				// Перебираем свойства
 				for (ULONG n = 0; (n < MAX_PROPERTY) & (data->ATTR[n].Name != ""); n++) {
 					VARIANT vtProp;
@@ -287,10 +285,10 @@ HRESULT SysInfo::WMIData(WMIInfoMany *data) {
 
 	std::string q = "SELECT * FROM " + data->WMIClass;
 
-	objWMI.Get((_bstr_t)ConvertMBSToBSTR(q), &pEnumerator);
+	hr = objWMI.Get((_bstr_t)ConvertMBSToBSTR(q), &pEnumerator);
 
-	hr = WBEM_S_NO_ERROR;
-	// Final Next will return WBEM_S_FALSE
+	 
+	
 	while (WBEM_S_NO_ERROR == hr)
 	{
 		ULONG            uReturned;
@@ -333,10 +331,9 @@ HRESULT SysInfo::WMIData(std::vector <WMIInfo> *data, WMIInfo *st) {
 
 	std::string q = "SELECT * FROM " + st->WMIClass;
 
-	objWMI.Get((_bstr_t)ConvertMBSToBSTR(q), &pEnumerator);
+	hr = objWMI.Get((_bstr_t)ConvertMBSToBSTR(q), &pEnumerator);
 
-	hr = WBEM_S_NO_ERROR;
-	// Final Next will return WBEM_S_FALSE
+	
 	while (WBEM_S_NO_ERROR == hr)
 	{
 		ULONG            uReturned;
@@ -347,10 +344,7 @@ HRESULT SysInfo::WMIData(std::vector <WMIInfo> *data, WMIInfo *st) {
 		if (SUCCEEDED(hr)) {
 			// Перебираем объекты
 			for (ULONG i = 0; i < uReturned; i++) {
-
 				data->push_back(res);
-
-
 				// перебираем свойства
 				for (ULONG n = 0; (n < MAX_PROPERTY) & (st->ATTR[n].Property != ""); n++) {
 					VARIANT vtProp;
