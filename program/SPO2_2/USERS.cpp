@@ -1,12 +1,5 @@
 #include "USERS.h"
 
-
-
-
-
-
-
-
 HRESULT USERS::Go(void){
 	ManyWMIInfo(&USERSstr, &USERS_I);
 
@@ -135,6 +128,7 @@ HRESULT USERS::Go(void){
 
 		
 	}
+
 
 
 
