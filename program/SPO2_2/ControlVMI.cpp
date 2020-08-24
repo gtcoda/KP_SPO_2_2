@@ -79,7 +79,7 @@ ControlWMI::ControlWMI() {
 		CoUninitialize();
 	}
 
-	cout << "Connected to ROOT\\CIMV2 WMI namespace" << endl;
+	//cout << "Connected to ROOT\\CIMV2 WMI namespace" << endl;
 
 
 	// Step 5: --------------------------------------------------

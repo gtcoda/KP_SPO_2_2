@@ -34,9 +34,6 @@ using namespace std;
 
 #include "DB.h"
 
-
-
-
 // Максимальное количество свойств
 const int MAX_PROPERTY = 15;
 // Максимальное количество экземпляров

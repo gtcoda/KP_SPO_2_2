@@ -60,15 +60,14 @@ HRESULT USERS::Go(void){
 
 
 		LPUSER_INFO_2 pBuf2 = NULL;
+		LPUSER_INFO_3 pBuf3 = NULL;
 		LPTSTR sStringSid = NULL;
-
 		wchar_t usersname[255];
 
 		wcscpy_s(usersname, 255, user[dwTotalCount - 1]);
 
 
 		nStatus = NetUserGetInfo(NULL, usersname, 2, (LPBYTE *)&pBuf2);
-
 
 		if (nStatus == NERR_Success) {
 			if (pBuf2 != NULL && pBuf2->usri2_last_logon != 0) {
@@ -137,3 +136,4 @@ HRESULT USERS::Go(void){
 
 	return S_OK;
 }
+
