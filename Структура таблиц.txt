@@ -1,0 +1,312 @@
+mysql> describe BIOS;
++--------------+--------------+------+-----+---------+-------+
+| Field        | Type         | Null | Key | Default | Extra |
++--------------+--------------+------+-----+---------+-------+
+| id           | int(64)      | NO   |     | NULL    |       |
+| Version      | varchar(255) | YES  |     | NULL    |       |
+| Caption      | varchar(255) | YES  |     | NULL    |       |
+| Manufacturer | varchar(255) | YES  |     | NULL    |       |
++--------------+--------------+------+-----+---------+-------+
+4 rows in set (0.00 sec)
+
+mysql> describe BaseBoard;
++--------------+--------------+------+-----+---------+-------+
+| Field        | Type         | Null | Key | Default | Extra |
++--------------+--------------+------+-----+---------+-------+
+| id           | int(64)      | NO   |     | NULL    |       |
+| Caption      | varchar(255) | YES  |     | NULL    |       |
+| Description  | varchar(255) | YES  |     | NULL    |       |
+| Manufacturer | varchar(255) | YES  |     | NULL    |       |
+| Product      | varchar(255) | YES  |     | NULL    |       |
+| SerialNumber | varchar(255) | YES  |     | NULL    |       |
+| Tag          | varchar(255) | YES  |     | NULL    |       |
+| Version      | varchar(255) | YES  |     | NULL    |       |
++--------------+--------------+------+-----+---------+-------+
+8 rows in set (0.00 sec)
+
+mysql> describe CPU;
++---------------------------+--------------+------+-----+---------+-------+
+| Field                     | Type         | Null | Key | Default | Extra |
++---------------------------+--------------+------+-----+---------+-------+
+| id                        | int(64)      | NO   |     | NULL    |       |
+| Name                      | varchar(255) | YES  |     | NULL    |       |
+| Architecture              | varchar(255) | YES  |     | NULL    |       |
+| AddressWidth              | int(64)      | YES  |     | NULL    |       |
+| MaxClockSpeed             | int(64)      | YES  |     | NULL    |       |
+| CurrentClockSpeed         | int(64)      | YES  |     | NULL    |       |
+| ExtClock                  | int(64)      | YES  |     | NULL    |       |
+| NumberOfCores             | int(64)      | YES  |     | NULL    |       |
+| NumberOfEnabledCore       | int(64)      | YES  |     | NULL    |       |
+| NumberOfLogicalProcessors | int(64)      | YES  |     | NULL    |       |
+| L2CacheSize               | int(64)      | YES  |     | NULL    |       |
+| L3CacheSize               | int(64)      | YES  |     | NULL    |       |
++---------------------------+--------------+------+-----+---------+-------+
+12 rows in set (0.05 sec)
+
+mysql> describe DISK;
++---------+--------------+------+-----+---------+-------+
+| Field   | Type         | Null | Key | Default | Extra |
++---------+--------------+------+-----+---------+-------+
+| id      | int(64)      | NO   |     | NULL    |       |
+| Caption | varchar(255) | YES  |     | NULL    |       |
+| Model   | varchar(255) | YES  |     | NULL    |       |
+| Size    | bigint(64)   | YES  |     | NULL    |       |
++---------+--------------+------+-----+---------+-------+
+4 rows in set (0.00 sec)
+
+mysql> describe DesktopMonitor;
++---------------------+--------------+------+-----+---------+-------+
+| Field               | Type         | Null | Key | Default | Extra |
++---------------------+--------------+------+-----+---------+-------+
+| id                  | int(255)     | NO   |     | NULL    |       |
+| Description         | varchar(255) | NO   |     | NULL    |       |
+| DeviceID            | varchar(255) | NO   |     | NULL    |       |
+| Name                | varchar(255) | NO   |     | NULL    |       |
+| MonitorManufacturer | varchar(255) | NO   |     | NULL    |       |
++---------------------+--------------+------+-----+---------+-------+
+5 rows in set (0.00 sec)
+
+mysql> describe KEYBOARD;
++----------------------+--------------+------+-----+---------+-------+
+| Field                | Type         | Null | Key | Default | Extra |
++----------------------+--------------+------+-----+---------+-------+
+| id                   | int(64)      | NO   |     | NULL    |       |
+| Description          | varchar(255) | NO   |     | NULL    |       |
+| DeviceID             | varchar(255) | YES  |     | NULL    |       |
+| Caption              | varchar(255) | YES  |     | NULL    |       |
+| NumberOfFunctionKeys | varchar(255) | YES  |     | NULL    |       |
++----------------------+--------------+------+-----+---------+-------+
+5 rows in set (0.00 sec)
+
+mysql> describe Manager;
++-------+---------+------+-----+---------+----------------+
+| Field | Type    | Null | Key | Default | Extra          |
++-------+---------+------+-----+---------+----------------+
+| id    | int(64) | NO   | PRI | NULL    | auto_increment |
+| time  | int(64) | NO   |     | NULL    |                |
++-------+---------+------+-----+---------+----------------+
+2 rows in set (0.00 sec)
+
+mysql> describe NETWORK;
++-------------+--------------+------+-----+---------+-------+
+| Field       | Type         | Null | Key | Default | Extra |
++-------------+--------------+------+-----+---------+-------+
+| id          | int(64)      | NO   |     | NULL    |       |
+| AdapterName | varchar(255) | NO   |     | NULL    |       |
+| Description | varchar(255) | NO   |     | NULL    |       |
+| MAC         | varchar(255) | NO   |     | NULL    |       |
+| IP          | varchar(255) | NO   |     | NULL    |       |
+| Gateway     | varchar(255) | NO   |     | NULL    |       |
+| DHCP        | varchar(255) | NO   |     | NULL    |       |
+| IP_DHCP     | varchar(255) | NO   |     | NULL    |       |
++-------------+--------------+------+-----+---------+-------+
+8 rows in set (0.00 sec)
+
+mysql> describe PART;
++------------+--------------+------+-----+---------+-------+
+| Field      | Type         | Null | Key | Default | Extra |
++------------+--------------+------+-----+---------+-------+
+| id         | int(64)      | NO   |     | NULL    |       |
+| Caption    | varchar(255) | YES  |     | NULL    |       |
+| FileSystem | varchar(255) | YES  |     | NULL    |       |
+| Size       | varchar(255) | YES  |     | NULL    |       |
+| FreeSpace  | varchar(255) | YES  |     | NULL    |       |
++------------+--------------+------+-----+---------+-------+
+5 rows in set (0.01 sec)
+
+mysql> describe PROCESS;
++--------+--------------+------+-----+---------+-------+
+| Field  | Type         | Null | Key | Default | Extra |
++--------+--------------+------+-----+---------+-------+
+| id     | int(64)      | NO   |     | NULL    |       |
+| Name   | varchar(255) | YES  |     | NULL    |       |
+| Handle | varchar(255) | YES  |     | NULL    |       |
++--------+--------------+------+-----+---------+-------+
+3 rows in set (0.02 sec)
+
+mysql> describe Pointer;
++-----------------+--------------+------+-----+---------+-------+
+| Field           | Type         | Null | Key | Default | Extra |
++-----------------+--------------+------+-----+---------+-------+
+| id              | int(64)      | NO   |     | NULL    |       |
+| Caption         | varchar(255) | YES  |     | NULL    |       |
+| Description     | varchar(255) | YES  |     | NULL    |       |
+| Manufacturer    | varchar(255) | YES  |     | NULL    |       |
+| HardwareType    | varchar(255) | YES  |     | NULL    |       |
+| DeviceID        | varchar(255) | YES  |     | NULL    |       |
+| DeviceInterface | varchar(255) | YES  |     | NULL    |       |
+| NumberOfButtons | varchar(255) | YES  |     | NULL    |       |
++-----------------+--------------+------+-----+---------+-------+
+8 rows in set (0.00 sec)
+
+mysql> describe UPTIME
+    -> describe VIDEO;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'describe VIDEO' at line 2
+mysql>
+mysql> describe BIOS;
++--------------+--------------+------+-----+---------+-------+
+| Field        | Type         | Null | Key | Default | Extra |
++--------------+--------------+------+-----+---------+-------+
+| id           | int(64)      | NO   |     | NULL    |       |
+| Version      | varchar(255) | YES  |     | NULL    |       |
+| Caption      | varchar(255) | YES  |     | NULL    |       |
+| Manufacturer | varchar(255) | YES  |     | NULL    |       |
++--------------+--------------+------+-----+---------+-------+
+4 rows in set (0.01 sec)
+
+mysql> describe BaseBoard;
++--------------+--------------+------+-----+---------+-------+
+| Field        | Type         | Null | Key | Default | Extra |
++--------------+--------------+------+-----+---------+-------+
+| id           | int(64)      | NO   |     | NULL    |       |
+| Caption      | varchar(255) | YES  |     | NULL    |       |
+| Description  | varchar(255) | YES  |     | NULL    |       |
+| Manufacturer | varchar(255) | YES  |     | NULL    |       |
+| Product      | varchar(255) | YES  |     | NULL    |       |
+| SerialNumber | varchar(255) | YES  |     | NULL    |       |
+| Tag          | varchar(255) | YES  |     | NULL    |       |
+| Version      | varchar(255) | YES  |     | NULL    |       |
++--------------+--------------+------+-----+---------+-------+
+8 rows in set (0.00 sec)
+
+mysql> describe CPU;
++---------------------------+--------------+------+-----+---------+-------+
+| Field                     | Type         | Null | Key | Default | Extra |
++---------------------------+--------------+------+-----+---------+-------+
+| id                        | int(64)      | NO   |     | NULL    |       |
+| Name                      | varchar(255) | YES  |     | NULL    |       |
+| Architecture              | varchar(255) | YES  |     | NULL    |       |
+| AddressWidth              | int(64)      | YES  |     | NULL    |       |
+| MaxClockSpeed             | int(64)      | YES  |     | NULL    |       |
+| CurrentClockSpeed         | int(64)      | YES  |     | NULL    |       |
+| ExtClock                  | int(64)      | YES  |     | NULL    |       |
+| NumberOfCores             | int(64)      | YES  |     | NULL    |       |
+| NumberOfEnabledCore       | int(64)      | YES  |     | NULL    |       |
+| NumberOfLogicalProcessors | int(64)      | YES  |     | NULL    |       |
+| L2CacheSize               | int(64)      | YES  |     | NULL    |       |
+| L3CacheSize               | int(64)      | YES  |     | NULL    |       |
++---------------------------+--------------+------+-----+---------+-------+
+12 rows in set (0.00 sec)
+
+mysql> describe DISK;
++---------+--------------+------+-----+---------+-------+
+| Field   | Type         | Null | Key | Default | Extra |
++---------+--------------+------+-----+---------+-------+
+| id      | int(64)      | NO   |     | NULL    |       |
+| Caption | varchar(255) | YES  |     | NULL    |       |
+| Model   | varchar(255) | YES  |     | NULL    |       |
+| Size    | bigint(64)   | YES  |     | NULL    |       |
++---------+--------------+------+-----+---------+-------+
+4 rows in set (0.00 sec)
+
+mysql> describe DesktopMonitor;
++---------------------+--------------+------+-----+---------+-------+
+| Field               | Type         | Null | Key | Default | Extra |
++---------------------+--------------+------+-----+---------+-------+
+| id                  | int(255)     | NO   |     | NULL    |       |
+| Description         | varchar(255) | NO   |     | NULL    |       |
+| DeviceID            | varchar(255) | NO   |     | NULL    |       |
+| Name                | varchar(255) | NO   |     | NULL    |       |
+| MonitorManufacturer | varchar(255) | NO   |     | NULL    |       |
++---------------------+--------------+------+-----+---------+-------+
+5 rows in set (0.00 sec)
+
+mysql> describe KEYBOARD;
++----------------------+--------------+------+-----+---------+-------+
+| Field                | Type         | Null | Key | Default | Extra |
++----------------------+--------------+------+-----+---------+-------+
+| id                   | int(64)      | NO   |     | NULL    |       |
+| Description          | varchar(255) | NO   |     | NULL    |       |
+| DeviceID             | varchar(255) | YES  |     | NULL    |       |
+| Caption              | varchar(255) | YES  |     | NULL    |       |
+| NumberOfFunctionKeys | varchar(255) | YES  |     | NULL    |       |
++----------------------+--------------+------+-----+---------+-------+
+5 rows in set (0.00 sec)
+
+mysql> describe Manager;
++-------+---------+------+-----+---------+----------------+
+| Field | Type    | Null | Key | Default | Extra          |
++-------+---------+------+-----+---------+----------------+
+| id    | int(64) | NO   | PRI | NULL    | auto_increment |
+| time  | int(64) | NO   |     | NULL    |                |
++-------+---------+------+-----+---------+----------------+
+2 rows in set (0.00 sec)
+
+mysql> describe NETWORK;
++-------------+--------------+------+-----+---------+-------+
+| Field       | Type         | Null | Key | Default | Extra |
++-------------+--------------+------+-----+---------+-------+
+| id          | int(64)      | NO   |     | NULL    |       |
+| AdapterName | varchar(255) | NO   |     | NULL    |       |
+| Description | varchar(255) | NO   |     | NULL    |       |
+| MAC         | varchar(255) | NO   |     | NULL    |       |
+| IP          | varchar(255) | NO   |     | NULL    |       |
+| Gateway     | varchar(255) | NO   |     | NULL    |       |
+| DHCP        | varchar(255) | NO   |     | NULL    |       |
+| IP_DHCP     | varchar(255) | NO   |     | NULL    |       |
++-------------+--------------+------+-----+---------+-------+
+8 rows in set (0.00 sec)
+
+mysql> describe PART;
++------------+--------------+------+-----+---------+-------+
+| Field      | Type         | Null | Key | Default | Extra |
++------------+--------------+------+-----+---------+-------+
+| id         | int(64)      | NO   |     | NULL    |       |
+| Caption    | varchar(255) | YES  |     | NULL    |       |
+| FileSystem | varchar(255) | YES  |     | NULL    |       |
+| Size       | varchar(255) | YES  |     | NULL    |       |
+| FreeSpace  | varchar(255) | YES  |     | NULL    |       |
++------------+--------------+------+-----+---------+-------+
+5 rows in set (0.00 sec)
+
+mysql> describe PROCESS;
++--------+--------------+------+-----+---------+-------+
+| Field  | Type         | Null | Key | Default | Extra |
++--------+--------------+------+-----+---------+-------+
+| id     | int(64)      | NO   |     | NULL    |       |
+| Name   | varchar(255) | YES  |     | NULL    |       |
+| Handle | varchar(255) | YES  |     | NULL    |       |
++--------+--------------+------+-----+---------+-------+
+3 rows in set (0.00 sec)
+
+mysql> describe Pointer;
++-----------------+--------------+------+-----+---------+-------+
+| Field           | Type         | Null | Key | Default | Extra |
++-----------------+--------------+------+-----+---------+-------+
+| id              | int(64)      | NO   |     | NULL    |       |
+| Caption         | varchar(255) | YES  |     | NULL    |       |
+| Description     | varchar(255) | YES  |     | NULL    |       |
+| Manufacturer    | varchar(255) | YES  |     | NULL    |       |
+| HardwareType    | varchar(255) | YES  |     | NULL    |       |
+| DeviceID        | varchar(255) | YES  |     | NULL    |       |
+| DeviceInterface | varchar(255) | YES  |     | NULL    |       |
+| NumberOfButtons | varchar(255) | YES  |     | NULL    |       |
++-----------------+--------------+------+-----+---------+-------+
+8 rows in set (0.00 sec)
+
+mysql> describe UPTIME;
++--------+--------------+------+-----+---------+-------+
+| Field  | Type         | Null | Key | Default | Extra |
++--------+--------------+------+-----+---------+-------+
+| id     | int(64)      | NO   |     | NULL    |       |
+| Day    | varchar(255) | YES  |     | NULL    |       |
+| Hours  | varchar(255) | YES  |     | NULL    |       |
+| Min    | varchar(255) | YES  |     | NULL    |       |
+| Second | varchar(255) | YES  |     | NULL    |       |
++--------+--------------+------+-----+---------+-------+
+5 rows in set (0.01 sec)
+
+mysql> describe VIDEO;
++-----------------------------+--------------+------+-----+---------+-------+
+| Field                       | Type         | Null | Key | Default | Extra |
++-----------------------------+--------------+------+-----+---------+-------+
+| id                          | int(255)     | NO   |     | NULL    |       |
+| AdapterCompatibility        | varchar(255) | NO   |     | NULL    |       |
+| Description                 | varchar(255) | NO   |     | NULL    |       |
+| AdapterRAM                  | varchar(255) | NO   |     | NULL    |       |
+| CurrentHorizontalResolution | varchar(255) | NO   |     | NULL    |       |
+| CurrentVerticalResolution   | varchar(255) | NO   |     | NULL    |       |
+| DriverVersion               | varchar(255) | NO   |     | NULL    |       |
+| PNPDeviceID                 | varchar(255) | NO   |     | NULL    |       |
++-----------------------------+--------------+------+-----+---------+-------+
+8 rows in set (0.00 sec)

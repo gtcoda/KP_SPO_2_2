@@ -1,7 +1,7 @@
 #include "BASEBOARD.h"
 
 HRESULT BASEBOARD::Go(void) {
-	SysInfo::Info(&BaseBoard);
+	SysInfo::Info(&BaseBoardstr);
 
 	return S_OK;
 }

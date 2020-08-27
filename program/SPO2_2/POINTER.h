@@ -11,7 +11,7 @@ class POINTER : public SysInfo {
 private:
 
 	// Информация о мыши
-	WMIInfo POINTERstr = {
+	WMIInfo POINTER_I = {
 		//WMI CLASS
 			"Win32_PointingDevice",
 			"Pointer_INFO",
@@ -27,6 +27,9 @@ private:
 			{"NumberOfButtons ", "Количество кнопок", ""}
 			// Конец инициализации внутренней структyры info	
 	} };
+
+
+	WMIInfoMany POINTERstr = { "Указатель №" };
 
 
 public:

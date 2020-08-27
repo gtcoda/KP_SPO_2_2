@@ -11,7 +11,7 @@ class BASEBOARD : public SysInfo {
 private:
 
 	//Информация о Материнской Плате
-	WMIInfo BaseBoard = {
+	WMIInfo BaseBoardstr = {
 		//WMI CLASS
 			"Win32_BaseBoard",
 			"BaseBoard_INFO",
