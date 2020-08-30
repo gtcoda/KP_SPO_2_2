@@ -15,7 +15,7 @@
 #define COUNT_LINE_MAIN_MENU 1			// Количество строк занятых основной менюшкой.
 #define COLUMN_LINE_MAIN_MENU 0			// Начальная колонка строк меню.
 
-#define COUNT_LINE_MENU 14			// Количество строк занятых вторичной менюшкой.
+#define COUNT_LINE_MENU 15			// Количество строк занятых вторичной менюшкой.
 #define COLUMN_LINE_MENU 1			// Начальная колонка строк меню.
 
 #define DB_ACTIVE_WORK (COUNT_LINE_VELCOM) // Позиция занимаемая именем активной базы
@@ -46,6 +46,7 @@
 #define MENU_PROCESS 	"PROCESS"
 #define MENU_UPTIME 	"UPTIME"
 #define MENU_USERS	 	"USERS"
+#define MENU_ALL		"ALL"
 #define MENU_EXIT 		"EXIT"
 
 #define ALL "Все."

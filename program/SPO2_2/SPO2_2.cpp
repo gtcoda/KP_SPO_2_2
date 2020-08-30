@@ -47,6 +47,7 @@ const char* meni_points[] = {
 				MENU_PROCESS,
 				MENU_UPTIME,
 				MENU_USERS,
+				MENU_ALL,
 				MENU_EXIT
 };
 
@@ -90,12 +91,28 @@ int main(int iArgCnt, char ** argv){
 
 		clear(COLUMN_LINE_MENU, MEMU_MAIN + 1);
 
-
+		if (!strcmp(meni_points[i], MENU_ALL)) {
+			CPUInf.Go();
+			BIOSInf.Go();
+			PARTITIONInf.Go();
+			DISKInf.Go();
+			BASEBOARDInf.Go();
+			KEYBOARDInf.Go();
+			POINTERInf.Go();
+			VIDEOInf.Go();
+			MONITORInf.Go();
+			NETWORKInf.Go();
+			PROCESSInf.Go();
+			UPTIMEInf.Go();
+			UPTIMEInf.Go();
+			USERSInf.Go();
+			continue;
+		}
 		if (!strcmp(meni_points[i], MENU_CPU)) {
 			CPUInf.Go();
 			continue;
 		}
-		else if (!strcmp(meni_points[i], MENU_BIOS)) {
+		else if (!strcmp(meni_points[i], MENU_BIOS) ) {
 			BIOSInf.Go();
 			continue;
 		}
