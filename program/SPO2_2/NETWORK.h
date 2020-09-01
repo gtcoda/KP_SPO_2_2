@@ -5,7 +5,6 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include "SysInfo.h"
 
-
 #include <stdio.h>
 #include <windows.h>
 #include <iphlpapi.h>
@@ -37,15 +36,8 @@ private:
 
 	WMIInfoMany NetworkAdapter = { "Адаптер №" };
 
-
 	HRESULT GetNetworkInfo(WMIInfoMany *NetworkAdapter);
-
 public:
 	HRESULT Go(void);
-
 };
-
-
-
-
 #endif

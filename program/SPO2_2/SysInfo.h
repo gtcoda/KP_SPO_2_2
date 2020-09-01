@@ -89,6 +89,10 @@ private:
 		   
 	OutXML& OXML = OutXML::Instance();
 
+	// Запрет на многократную запись в БД
+	bool db_write = false;
+
+	HRESULT Check_BD(void);
 
 public:
 	int id = 0;

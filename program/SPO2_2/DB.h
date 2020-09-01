@@ -27,12 +27,10 @@ using namespace std;
 #include <cppconn/prepared_statement.h>
 
 #pragma once
-class DBase
-{
+class DBase{
 public:
 	
-	static DBase& Instance()
-	{
+	static DBase& Instance(){
 		static DBase theSingleInstance;
 		return theSingleInstance;
 	}
